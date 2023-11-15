@@ -1,0 +1,243 @@
+-- Crear la base de datos
+CREATE DATABASE bdBarberia;
+USE bdBarberia;
+drop database bdBarberia;
+-- Crear las tablas de roles, permisos y roles_permisos
+CREATE TABLE roles (
+    id_rol BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255),
+    fecha_creacion DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    estado ENUM('Activo', 'Inactivo') DEFAULT 'Activo'
+);
+
+-- Restricción UNIQUE para el nombre del rol
+ALTER TABLE roles
+ADD CONSTRAINT roles_nombre_unico UNIQUE (nombre);
+
+CREATE TABLE permisos (
+    id_permiso BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre_permiso VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    estado ENUM('Activo', 'Inactivo') DEFAULT 'Activo'
+);
+
+-- Restricción UNIQUE para el nombre del permiso
+ALTER TABLE permisos
+ADD CONSTRAINT permisos_nombre_unico UNIQUE (nombre_permiso);
+
+CREATE TABLE roles_permisos (
+    id_rol BIGINT,
+    id_permiso BIGINT,
+    FOREIGN KEY (id_rol) REFERENCES roles(id_rol),
+    FOREIGN KEY (id_permiso) REFERENCES permisos(id_permiso)
+);
+
+-- Restricción UNIQUE para evitar duplicados de roles y permisos
+ALTER TABLE roles_permisos
+ADD CONSTRAINT roles_permisos_unico UNIQUE (id_rol, id_permiso);
+
+-- Crear la tabla de clientes
+CREATE TABLE clientes (
+    id_cliente BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255),
+    apellido VARCHAR(255),
+    telefono VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    estado ENUM('Activo', 'Inactivo') DEFAULT 'Activo'
+);
+
+-- Restricción UNIQUE para el número de teléfono
+ALTER TABLE clientes
+ADD CONSTRAINT clientes_telefono_unico UNIQUE (telefono);
+
+-- Validación de formato de número de teléfono (10 dígitos)
+ALTER TABLE clientes
+ADD CONSTRAINT clientes_telefono_formato_valido CHECK (LENGTH(telefono) = 10);
+
+-- Validación de formato de fecha de creación
+ALTER TABLE clientes
+ADD CONSTRAINT clientes_fecha_creacion_valida CHECK (fecha_creacion <= CURDATE());
+
+-- Crear la tabla de servicios
+CREATE TABLE servicios (
+    id_servicio BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255),
+    valor DECIMAL(10, 2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Crear la tabla de usuarios
+CREATE TABLE usuarios (
+    id_usuario BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id_rol BIGINT,
+    nombre VARCHAR(255),
+    apellido VARCHAR(255),
+    telefono VARCHAR(255),
+    correo VARCHAR(255),
+    nombre_usuario VARCHAR(255),
+    contraseña VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    estado ENUM('Activo', 'Inactivo') DEFAULT 'Activo'
+);
+
+-- Restricción UNIQUE para el nombre de usuario
+ALTER TABLE usuarios
+ADD CONSTRAINT usuarios_nombre_usuario_unico UNIQUE (nombre_usuario);
+
+-- Restricción UNIQUE para el correo electrónico
+ALTER TABLE usuarios
+ADD CONSTRAINT usuarios_correo_unico UNIQUE (correo);
+
+-- Validaciones y restricciones para la tabla de usuarios
+ALTER TABLE usuarios
+ADD CONSTRAINT usuarios_contrasena_segura CHECK (LENGTH(contrasena) >= 6); -- Suponiendo al menos 6 caracteres
+ALTER TABLE usuarios
+ADD CONSTRAINT usuarios_telefono_formato_valido CHECK (LENGTH(telefono) = 10); -- Validación de formato de teléfono
+ALTER TABLE usuarios
+ADD CONSTRAINT usuarios_correo_formato_valido CHECK (correo REGEXP '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$'); -- Validación de formato de correo electrónico
+
+-- Crear la tabla de empleados
+CREATE TABLE empleados (
+    id_empleado BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255),
+    apellido VARCHAR(255),
+    correo VARCHAR(255),
+    telefono VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    estado ENUM('Activo', 'Inactivo') DEFAULT 'Activo'
+);
+
+-- Restricción UNIQUE para el correo electrónico
+ALTER TABLE empleados
+ADD CONSTRAINT empleados_correo_unico UNIQUE (correo);
+
+-- Validación de formato de número de teléfono
+ALTER TABLE empleados
+ADD CONSTRAINT empleados_telefono_formato_valido CHECK (LENGTH(telefono) = 10);
+
+-- Crear la tabla de citas
+CREATE TABLE citas (
+    id_cita BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id_empleado BIGINT,
+    id_servicio BIGINT,
+    id_cliente BIGINT,
+    fecha DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    estado ENUM('Pendiente', 'Confirmada', 'Finalizada') DEFAULT 'Pendiente',
+    FOREIGN KEY (id_empleado) REFERENCES empleados(id_empleado),
+    FOREIGN KEY (id_servicio) REFERENCES servicios(id_servicio),
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente)
+);
+
+-- Crear la tabla de ventas
+CREATE TABLE ventas (
+    id_ventas BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id_producto BIGINT,
+    id_cita BIGINT,
+    id_servicio BIGINT,
+    precio DECIMAL(10, 2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_producto) REFERENCES productos(id_producto),
+    FOREIGN KEY (id_cita) REFERENCES citas(id_cita),
+    FOREIGN KEY (id_servicio) REFERENCES servicios(id_servicio)
+);
+
+-- Restricción para asegurar que el valor de la venta sea no negativo
+ALTER TABLE ventas
+ADD CONSTRAINT ventas_valor_no_negativo CHECK (precio >= 0);
+select * from agenda;
+-- Crear la tabla de agenda
+CREATE TABLE agenda (
+    id_agenda BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id_empleado BIGINT,
+    motivo TEXT,
+    fecha DATE,
+    fechaFin DATE,
+    horaInicio TIME,
+    horaFin TIME,
+    estado VARCHAR(50),
+    dias_laborales VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_empleado) REFERENCES empleados(id_empleado)
+);
+
+select * from  agenda;
+
+-- Restricción para asegurar que la fecha de inicio sea antes que la fecha de fin
+ALTER TABLE agenda
+ADD CONSTRAINT agenda_fechas_validas CHECK (fecha <= fechaFin);
+
+-- Crear la tabla de insumos
+CREATE TABLE insumos (
+    id_insumo BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    cantidad INT,
+    precio DECIMAL(10, 2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Restricción para asegurar que la cantidad y el precio de los insumos sean no negativos
+ALTER TABLE insumos
+ADD CONSTRAINT insumos_cantidad_no_negativa CHECK (cantidad >= 0);
+
+-- Crear la tabla de productos
+CREATE TABLE productos (
+    id_producto BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    descripcion TEXT,
+    precio DECIMAL(10, 2) NOT NULL,
+    stock INT NOT NULL,
+    fecha_creacion DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Restricción para asegurar que el stock de los productos sea no negativo
+ALTER TABLE productos
+ADD CONSTRAINT productos_stock_no_negativo CHECK (stock >= 0);
+
+-- Crear la tabla de reportes
+CREATE TABLE reportes (
+    id_reporte BIGINT AUTO_INCREMENT PRIMARY KEY,
+    tipo VARCHAR(255),
+    descripcion TEXT,
+    fecha_creacion DATETIME,
+    creado_por VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+-- Iniciar la transacción
+START TRANSACTION;
+
+-- Variables para el ID del producto y el valor de la venta
+SET @id_producto = ?; -- Reemplaza "?" con el ID del producto recibido
+SET @valor_venta = ?; -- Reemplaza "?" con el valor de la venta recibido
+
+-- Restar la cantidad vendida del stock
+UPDATE productos
+SET stock = stock - 1
+WHERE id_producto = @id_producto;
+
+-- Insertar el registro de la venta en la tabla de ventas
+INSERT INTO ventas (id_cita, id_servicio, valor)
+VALUES (1, 1, @valor_venta); -- Reemplaza 1 y 1 con los IDs de la cita y el servicio correspondientes
+
+-- Confirmar la transacción
+COMMIT;
+
+-- Si se produce un error, puedes deshacer la transacción
+-- ROLLBACK;
+
+select *from agenda;
