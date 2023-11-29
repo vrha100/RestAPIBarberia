@@ -1,12 +1,16 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../database/config');
-
+const Proveedor = require('./proveedores')
 
 const Productos = sequelize.define('productos', {
   id_producto: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true
+  },
+  id_proveedor: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
   nombre: {
     type: DataTypes.STRING(255),
@@ -23,13 +27,12 @@ const Productos = sequelize.define('productos', {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  fecha_creacion: {
-    type: DataTypes.DATE
-  },
   estado: {
     type: DataTypes.STRING,
-    defaultValue: 'true',
+    defaultValue: 'Activo',
   }
 });
+
+Productos.belongsTo(Proveedor, { foreignKey: "id_proveedor" });
 
 module.exports = Productos;

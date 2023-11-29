@@ -1,4 +1,5 @@
 const Proveedores = require('../models/proveedores');
+const Producto = require('../models/productos');
 const { response } = require('express');
 
 const getProveedores = async (req, res = response) => {
@@ -25,6 +26,34 @@ const getProveedor = async (req, res = response) => {
     res.status(500).json({ error: 'Error al obtener el proveedor' });
   }
 }
+
+const getProveedorProductos = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+      // Obtener el proveedor por su ID
+      const proveedor = await Proveedores.findByPk(id);
+
+      if (!proveedor) {
+          return res.status(404).json({ error: `No se encontró un proveedor con ID ${id}` });
+      }
+
+      // Obtener los productos asociados al proveedor
+      const productos = await Producto.findAll({
+          where: { id_proveedor: id }, // Ajusta según la estructura de tu modelo
+      });
+
+      // Devolver la información del proveedor y sus productos
+      res.json({
+          proveedor,
+          productos,
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error al obtener el proveedor y sus productos' });
+  }
+};
+
 
 const putProveedor = async (req, res = response) => {
   const { id } = req.params;
@@ -78,6 +107,7 @@ const deleteProveedor = async (req, res = response) => {
 module.exports = {
   getProveedor,
   getProveedores,
+  getProveedorProductos,
   postProveedor,
   putProveedor,
   deleteProveedor
