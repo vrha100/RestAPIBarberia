@@ -39,8 +39,8 @@ class Server {
         this.app.use(this.path,require('../routes/clientes'))  
         this.app.use(this.path,require('../routes/servicios'))
         this.app.use(this.path,require('../routes/empleados'))
-
-        
+        this.app.use(this.path,require('../routes/pagos'))
+        this.app.use(this.path,require('../routes/detalleCompras'))
     }
 }
 
