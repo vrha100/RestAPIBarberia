@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const route = Router();
 
-const { getPermiso, getPermisos, postPermiso, editPermiso, deletePermiso,asignarPermisoARol } = require('../controllers/pernisos');
+const { getPermiso, getPermisos, postPermiso, editPermiso, deletePermiso,asignarPermisoARol } = require('../controllers/permisos');
 
 route.get('/permisos', getPermisos);
 route.get('/permisos/:id', getPermiso);
