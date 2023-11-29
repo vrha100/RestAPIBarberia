@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../database/config');
+const Pago = require('./pagos');
 
 const Compras = sequelize.define('Compras', {
   id_compra: {
@@ -7,28 +8,34 @@ const Compras = sequelize.define('Compras', {
     primaryKey: true,
     autoIncrement: true,
   },
-  id_proveedor: {
+  id_pago: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  producto: {
+  estado_compra: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  cantidad: {
-    type: DataTypes.INTEGER,
+  monto: {
+    type: DataTypes.DOUBLE,
     allowNull: false,
   },
-  precio_unitario: {
-    type: DataTypes.DECIMAL(10, 2),
+  created_at: {
+    type: DataTypes.DATE,
     allowNull: false,
+    defaultValue: DataTypes.NOW,
   },
-  total: {
-    type: DataTypes.DECIMAL(10, 2),
+  updated_at: {
+    type: DataTypes.DATE,
     allowNull: false,
+    defaultValue: DataTypes.NOW,
   },
 }, {
-  timestamps: false, // Desactivar automáticamente createdAt y updatedAt
+  timestamps: true,
+  updatedAt: 'updated_at',
+  createdAt: 'created_at',
 });
+
+Compras.belongsTo(Pago, {foreignKey: 'id_pago'})
 
 module.exports = Compras;

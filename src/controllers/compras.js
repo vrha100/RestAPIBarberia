@@ -49,10 +49,6 @@ const postCompra = async (req, res = response) => {
   const body = req.body;
 
   try {
-    // Calcular el total de la compra
-    const total = body.cantidad * body.precio_unitario;
-    body.total = total; // Agregar el total al objeto de compra
-
     const newCompra = await Compras.create(body);
     res.json(newCompra);
   } catch (error) {
