@@ -23,7 +23,11 @@ const Detallecompras = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    precioCompra: {
+    precioUnitario: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+    },
+    total: {
       type: DataTypes.FLOAT,
       allowNull: false,
     },
