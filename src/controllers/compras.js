@@ -89,14 +89,14 @@ const cambiarEstadoCompra = async (req, res = response) => {
 
     if (compra) {
       // Actualiza solo el campo 'estado'
-      await compra.update({ estado });
+      await compra.update({ estado: estado });
       res.json({ msg: 'El estado de la compra fue actualizado exitosamente' });
     } else {
       res.status(404).json({ error: `No se encontró la compra con ID ${id}` });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error al actualizar el estado de la compra' });
+    res.status(500).json({ error: 'Error al actualizar el estado de la compra', detalle: error.message });
   }
 }
 

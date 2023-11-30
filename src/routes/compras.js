@@ -9,6 +9,6 @@ route.get('/compras/:id', getCompra);
 route.post('/compras', postCompra);
 route.put('/compras/:id', putCompra);
 route.delete('/compras/:id', deleteCompra);
-route.put('/compra/:id/cambiarEstado', cambiarEstadoCompra)
+route.put('/compras/:id/cambiarEstado', cambiarEstadoCompra)
 
 module.exports = route;
