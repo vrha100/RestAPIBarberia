@@ -1,9 +1,10 @@
 const { Router } = require('express');
 const route = Router();
 
-const { getCompra, getCompras, postCompra, putCompra, deleteCompra } = require('../controllers/compras');
+const { getCompra, getCompras, postCompra, putCompra, deleteCompra, getComprasDetalles } = require('../controllers/compras');
 
 route.get('/compras', getCompras);
+route.get('/compras/detalles', getComprasDetalles)
 route.get('/compras/:id', getCompra);
 route.post('/compras', postCompra);
 route.put('/compras/:id', putCompra);

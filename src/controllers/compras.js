@@ -1,5 +1,6 @@
 const Compras = require('../models/compras');
 const { response } = require('express');
+const Detallecompras = require('../models/detalleCompras');
 
 const getCompras = async (req, res = response) => {
   try {
@@ -25,6 +26,40 @@ const getCompra = async (req, res = response) => {
     res.status(500).json({ error: 'Error al obtener la compra' });
   }
 }
+
+const getComprasDetalles = async (req, res = response) => {
+  try {
+    // Obtener todas las compras
+    const compras = await Compras.findAll();
+
+    // Verificar si hay compras
+    if (!compras || compras.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron compras' });
+    }
+
+    // Crear un array para almacenar las compras con sus detalles
+    const comprasConDetalles = [];
+
+    // Para cada compra, buscar sus detalles
+    for (const compra of compras) {
+      const detallesCompra = await Detallecompras.findAll({
+        where: { id_compra: compra.id_compra },
+      });
+
+      // Agregar la compra y sus detalles al array
+      comprasConDetalles.push({
+        compra,
+        detallesCompra,
+      });
+    }
+
+    // Responder con el array de compras y detalles
+    res.json(comprasConDetalles);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener las compras y sus detalles' });
+  }
+};
 
 const putCompra = async (req, res = response) => {
   const { id } = req.params;
@@ -79,6 +114,7 @@ const deleteCompra = async (req, res = response) => {
 module.exports = {
   getCompra,
   getCompras,
+  getComprasDetalles,
   postCompra,
   putCompra,
   deleteCompra
