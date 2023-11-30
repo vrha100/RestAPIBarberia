@@ -9,6 +9,10 @@ const Compras = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    descripcion: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     estado: {
       type: DataTypes.STRING,
       allowNull: false,
