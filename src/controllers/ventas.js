@@ -116,18 +116,17 @@ const postVentas = async (req, res = response) => {
   }
 };
 
-function calculateTotalPrice(productos) {
+function calculateTotalPrice(productos, servicios) {
   let totalPrice = 0;
   for (const producto of productos) {
     totalPrice += producto.cantidad * producto.precio;
   }
-  /*
-  for (const servicio of servicios) {
+  for (const servicio of servicios){
     totalPrice += servicio.cantidad * servicio.precio;
   }
-  */
   return totalPrice;
 }
+
 
 const anularVenta = async (req, res = response) => {
   const id_ventas = req.params.id; // Supongo que el ID de la venta se pasa como un parámetro en la URL

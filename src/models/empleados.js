@@ -32,6 +32,7 @@ const Empleado = sequelize.define('empleados', {
   documento: {
     type: DataTypes.STRING(20),
     allowNull: false,
+    unique: true,
     validate: {
         is: /^\d{10}$/,
     },
