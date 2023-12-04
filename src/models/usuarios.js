@@ -24,15 +24,27 @@ const Usuario = sequelize.define('usuario', {
   contrasena: {
     type: DataTypes.STRING(255),
     allowNull: false,
+    validate: {
+      len: {
+        args: [8, 255], // Puedes ajustar el rango según tus requisitos
+        msg: 'La contraseña debe tener al menos 8 caracteres',
+      },
+    },
   },
+  
   correo: {
     type: DataTypes.STRING(255),
     allowNull: false,
     unique: true,
     validate: {
-      isEmail: true,
+      isEmail: {
+        args: true,
+        msg: 'Por favor, ingrese un correo electrónico válido',
+      },
     },
   },
+  
+  
   created_at: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
@@ -52,7 +64,7 @@ const Usuario = sequelize.define('usuario', {
 
 Usuario.belongsTo(Rol, { foreignKey: 'id_rol' }); // Establece la relación con el modelo de Rol
 
-// Antes de crear un usuario, has un hash de su contraseña
+
 Usuario.beforeCreate(async (usuario) => {
   if (!usuario.contrasena) {
     throw new Error('La contraseña no puede estar vacía');
