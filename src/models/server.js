@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors')
 const body_parser = require('body-parser')
-
+const authController = require('../controllers/authController');
 const {sequelize} = require('../database/config')
 
 class Server {
@@ -26,6 +26,7 @@ class Server {
     }
 
     routes(){
+        this.app.post(`${this.path}/login`, authController.iniciarSesion);
         this.app.use(this.path,require('../routes/roles')) 
         this.app.use(this.path,require('../routes/usuarios'))  
         this.app.use(this.path,require('../routes/permisos'))

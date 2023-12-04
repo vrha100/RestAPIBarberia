@@ -16,7 +16,7 @@ const Permiso = sequelize.define('Permiso', {
         },
     },
 }, {
-    timestamps: true, // Esto debería ser suficiente para las columnas createdAt y updatedAt
+    timestamps: true,
 });
 
 module.exports = Permiso;
