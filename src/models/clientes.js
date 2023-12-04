@@ -9,6 +9,14 @@ const Clientes = sequelize.define('clientes', {
     allowNull: false,
     primaryKey: true,
   },
+  documento: {
+    type: DataTypes.STRING(20),
+    allowNull: false,
+    unique: true,
+    validate: {
+        is: /^\d{10}$/,
+    },
+  },
   nombre: {
     type: DataTypes.STRING,
     allowNull: false
