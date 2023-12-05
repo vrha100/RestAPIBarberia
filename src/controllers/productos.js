@@ -80,7 +80,18 @@ const deleteProducto = async (req, res = response) => {
     }
 }
 
+const obtenerProveedores = async (req, res = response) => {
+    try {
+        const proveedores = await Proveedor.findAll(); // Utiliza el método correspondiente para obtener proveedores
+        res.json({ proveedores });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener elementos de Proveedor' });
+    }
+}
+
 module.exports = {
+    obtenerProveedores,
     getProducto,
     getProductos,
     postProducto,

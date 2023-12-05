@@ -35,6 +35,7 @@ class Server {
         this.app.use(this.path,require('../routes/agenda')) 
         this.app.use(this.path,require('../routes/citas'))  
         this.app.use(this.path,require('../routes/compras'))  
+        this.app.use(this.path, require('../routes/registroFacial'))
         this.app.use(this.path,require('../routes/proveedores'))
         this.app.use(this.path,require('../routes/insumos'))  
         this.app.use(this.path,require('../routes/clientes'))  
