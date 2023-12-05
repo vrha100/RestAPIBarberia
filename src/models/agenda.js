@@ -1,9 +1,9 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../database/config');
 
-const Empleado = require('./empleados'); // Asegúrate de importar el modelo de Empleado
+const Empleado = require('./empleados');
 
-const Agenda = sequelize.define('Agenda', {
+const Agenda = sequelize.define('Agendas', {
   id_agenda: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -11,6 +11,7 @@ const Agenda = sequelize.define('Agenda', {
   },
   id_empleado: {
     type: DataTypes.INTEGER,
+    allowNull: false
   },
   motivo: {
     type: DataTypes.TEXT,
@@ -28,16 +29,11 @@ const Agenda = sequelize.define('Agenda', {
     type: DataTypes.TIME,
   },
   estado: {
-    type: DataTypes.STRING,
-    defaultValue: 'true',
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
   },
-  dias_laborales: {
-    type: DataTypes.STRING(255),
-  },
-  
- 
 });
 
-Agenda.belongsTo(Empleado, { foreignKey: 'id_empleado' }); // Define la relación con Empleado
+Agenda.belongsTo(Empleado, { foreignKey: 'id_empleado' });
 
 module.exports = Agenda;
