@@ -12,10 +12,6 @@ const Citas = sequelize.define('Citas', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  id_servicio: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
   id_cliente: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -34,9 +30,8 @@ const Citas = sequelize.define('Citas', {
 
 // Vincular las llaves foráneas
 Citas.belongsTo(Citas, { foreignKey: 'id_empleado', as: 'empleados' });
-Citas.belongsTo(Citas, { foreignKey: 'id_servicio', as: 'servicios' });
 Citas.belongsTo(Citas, { foreignKey: 'id_cliente', as: 'clientes' });
-Citas.belongsTo(Citas, { foreignKey: 'id_agenda', as: 'agenda' });
+Citas.belongsTo(Citas, { foreignKey: 'id_agenda', as: 'Agenda' });
 
 // Ahora las llaves foráneas están vinculadas
 

@@ -41,6 +41,7 @@ class Server {
         this.app.use(this.path,require('../routes/servicios'))
         this.app.use(this.path,require('../routes/empleados'))
         this.app.use(this.path,require('../routes/detalleCompras'))
+        this.app.use(this.path,require('../routes/citas_servicios'))
     }
 }
 
