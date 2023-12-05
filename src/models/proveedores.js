@@ -31,6 +31,10 @@ const Proveedores = sequelize.define('proveedores', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  estado: {
+    type: DataTypes.STRING,
+    defaultValue: 'Activo',
+  },
   createdAt: {
     type: DataTypes.DATE,
     allowNull: false,
