@@ -168,8 +168,30 @@ const cambiarEstado = async (req, res = response) =>{
   }
 }
 
+const cancelarVenta = async (req, res = response) => {
+  const  { id_ventas } = req.params;
+
+  try {
+    const venta = await Venta.findByPk(id_ventas);
+    if (!venta) {
+      return res.status(404).json({ error: 'Venta no encontrada' });
+    }
+    if (venta.estado === 'Cancelado') {
+      return res.status(400).json({ error: 'La venta ya está cancelada' });
+    }
+    venta.estado = 'Cancelado';
+    await venta.save();
+
+    return res.json({ message: 'Venta cancelada exitosamente' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+
 module.exports = {
   getVentas,
   postVentas,
-  anularVenta
+  anularVenta,
+  cancelarVenta
 };
