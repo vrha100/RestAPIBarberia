@@ -1,5 +1,6 @@
 const Agenda = require('../models/agenda');
 const { response } = require('express');
+const Empleado = require('../models/empleados');
 
 const getAgendas = async (req, res = response) => {
     try {
@@ -25,6 +26,19 @@ const getAgenda = async (req, res = response) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al obtener el elemento de Agenda' });
+    }
+};
+
+const getAgendasEmpleados = async (req, res = response) => {
+    try {
+        const agendas = await Agenda.findAll({
+            include: [{ model: Empleado, as: 'empleado' }],
+        });
+
+        res.json({ agendas });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener elementos de Agenda' });
     }
 };
 
@@ -118,6 +132,7 @@ const disableEvent = async (req, res) => {
 module.exports = {
     disableEvent,
     getAgenda,
+    getAgendasEmpleados,
     getAgendas,
     postAgenda,
     putAgenda,

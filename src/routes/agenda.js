@@ -1,9 +1,10 @@
 const { Router } = require('express');
 const route = Router();
 
-const { getAgenda, getAgendas, postAgenda, putAgenda, deleteAgenda,disableEvent} = require('../controllers/agenda');
+const { getAgenda, getAgendas,getAgendasEmpleados, postAgenda, putAgenda, deleteAgenda,disableEvent} = require('../controllers/agenda');
 
 route.get('/agenda', getAgendas);
+route.get('/agendasempleados', getAgendasEmpleados)
 route.get('/agenda/:id', getAgenda);
 route.post('/agenda', postAgenda);
 route.put('/agenda/:id', putAgenda);
