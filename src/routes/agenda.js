@@ -4,7 +4,6 @@ const route = Router();
 const { getAgenda, getAgendas,getAgendasEmpleados, postAgenda, putAgenda, deleteAgenda,disableEvent} = require('../controllers/agenda');
 
 route.get('/agenda', getAgendas);
-route.get('/agendasempleados', getAgendasEmpleados)
 route.get('/agenda/:id', getAgenda);
 route.post('/agenda', postAgenda);
 route.put('/agenda/:id', putAgenda);

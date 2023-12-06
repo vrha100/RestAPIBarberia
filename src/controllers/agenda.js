@@ -29,19 +29,6 @@ const getAgenda = async (req, res = response) => {
     }
 };
 
-const getAgendasEmpleados = async (req, res = response) => {
-    try {
-        const agendas = await Agenda.findAll({
-            include: [{ model: Empleado, as: 'empleado' }],
-        });
-
-        res.json({ agendas });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error al obtener elementos de Agenda' });
-    }
-};
-
 const putAgenda = async (req, res = response) => {
     const { id } = req.params;
     const updatedData = req.body;
@@ -132,7 +119,6 @@ const disableEvent = async (req, res) => {
 module.exports = {
     disableEvent,
     getAgenda,
-    getAgendasEmpleados,
     getAgendas,
     postAgenda,
     putAgenda,
