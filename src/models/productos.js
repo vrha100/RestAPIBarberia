@@ -20,8 +20,8 @@ const Productos = sequelize.define('productos', {
     type: DataTypes.TEXT
   },
   precio: {
-    type: DataTypes.DECIMAL(10, 2),
-    allowNull: false
+    type: DataTypes.DOUBLE,
+    allowNull: false,
   },
   stock: {
     type: DataTypes.INTEGER,

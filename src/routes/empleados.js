@@ -5,7 +5,6 @@ const { getEmpleados, getEmpleado, postEmpleado, putEmpleado, cambiarEstadoEmple
 
 route.get('/empleado', getEmpleados);
 route.get('/empleado/:id', getEmpleado);
-route.get('/empleado/agenda/:id', getEmpleadoAgenda);
 route.post('/empleado', postEmpleado);
 route.put('/empleado/:id', putEmpleado);
 route.put('/empleado/cambiarEstado/:id', cambiarEstadoEmpleado);

@@ -6,6 +6,6 @@ const { postVentas, getVentas, anularVenta, cancelarVenta } = require('../contro
 route.get('/venta', getVentas);
 route.post('/venta', postVentas);
 route.delete('/venta/:id', anularVenta);
-route.put('/ventas/:id/cancelar', cancelarVenta);
+route.put('/venta/cancelar/:id_ventas', cancelarVenta);
 
 module.exports = route;

@@ -4,6 +4,7 @@ const DetalleServicio = require('../models/detalleServicio');
 const Producto = require('../models/productos')
 
 const { response } = require('express');
+const Clientes = require('../models/clientes');
 
 const getVentas = async (req, res = response) => {
   try {
@@ -36,9 +37,15 @@ const postVentas = async (req, res = response) => {
   // Obtener datos de la solicitud
   const { nueva_venta } = req.body;
   try {
+    const cliente = await Clientes.findByPk(nueva_venta.clienteId);
+    if (!cliente) {
+      return res.status(404).json({ error: 'Cliente no encontrado' });
+    }
     // Crear la venta
     const productos = nueva_venta.productos;
     const servicios = nueva_venta.servicios;
+    console.log('Productos: ', productos)
+    console.log('Servicios: ', servicios)
     const precio = calculateTotalPrice(productos, servicios);
     const venta = await Venta.create({
       id_cita: nueva_venta.citaId,
@@ -47,9 +54,9 @@ const postVentas = async (req, res = response) => {
       numeroFactura: nueva_venta.numeroFactura,
       precio: precio,
       estado: 'Pendiente',
-      nombre: nueva_venta.nombre,
-      apellido: nueva_venta.apellido,
-      documento: nueva_venta.documento
+      nombre: cliente.nombre,
+      apellido: cliente.apellido,
+      documento: cliente.documento
     });
     let id_venta = venta.get('id_ventas');
     console.log(productos)
@@ -119,10 +126,12 @@ const postVentas = async (req, res = response) => {
 function calculateTotalPrice(productos, servicios) {
   let totalPrice = 0;
   for (const producto of productos) {
-    totalPrice += producto.cantidad * producto.precio;
+    const precioFloat = parseFloat(producto.precioTotal);
+    totalPrice += producto.cantidad * precioFloat;
   }
   for (const servicio of servicios){
-    totalPrice += servicio.cantidad * servicio.precio;
+    const precioFloat = parseFloat(servicio.precioTotal);
+    totalPrice += servicio.cantidad * precioFloat;
   }
   return totalPrice;
 }
@@ -170,7 +179,7 @@ const cambiarEstado = async (req, res = response) =>{
 
 const cancelarVenta = async (req, res = response) => {
   const  { id_ventas } = req.params;
-
+  console.log(id_ventas)
   try {
     const venta = await Venta.findByPk(id_ventas);
     if (!venta) {

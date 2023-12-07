@@ -1,5 +1,4 @@
 const Empleado = require('../models/empleados');
-const Agenda = require('../models/agenda');
 const { response } = require('express');
 
 const getEmpleados = async (req, res = response) => {
@@ -11,34 +10,6 @@ const getEmpleados = async (req, res = response) => {
         res.status(500).json({ error: 'Error al obtener los empleados ' });
     }
 }
-
-const getEmpleadoAgenda = async (req, res) => {
-    const { id } = req.params;
-  
-    try {
-        // Obtener el proveedor por su ID
-        const empleado = await Empleado.findByPk(id);
-  
-        if (!empleado) {
-            return res.status(404).json({ error: `No se encontró un empleado con ID ${id}` });
-        }
-  
-        // Obtener los productos asociados al proveedor
-        const agendas = await Agenda.findAll({
-            where: { id_empleado: id }, // Ajusta según la estructura de tu modelo
-        });
-  
-        // Devolver la información del proveedor y sus productos
-        res.json({
-            empleado,
-            agendas,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error al obtener el empleado y su agenda' });
-    }
-  };
-  
 
 const getEmpleado = async (req, res = response) => {
     const id_empleado = req.params.id;
@@ -126,7 +97,6 @@ const cambiarEstadoEmpleado = async (req, res = response) => {
 module.exports = {
     getEmpleado,
     getEmpleados,
-    getEmpleadoAgenda,
     postEmpleado,
     putEmpleado,
     cambiarEstadoEmpleado
