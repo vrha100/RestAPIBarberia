@@ -15,7 +15,8 @@ class Server {
 
     listen(){
         this.app.listen(this.port,()=>{
-            console.log(`Esta escchando por el puerto ${this.port}`)
+          console.log(`Está escuchando por el puerto ${this.port}`);
+
         }
     )}
 
@@ -26,7 +27,7 @@ class Server {
     }
 
     routes(){
-        this.app.post(`${this.path}/login`, authController.iniciarSesion);
+      this.app.post(`${this.path}/login`, authController.iniciarSesion);
         this.app.use(this.path,require('../routes/roles')) 
         this.app.use(this.path,require('../routes/usuarios'))  
         this.app.use(this.path,require('../routes/permisos'))

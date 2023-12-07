@@ -1,12 +1,18 @@
 const { Router } = require('express');
-const route = Router();
+const router = Router();
 
-const { getInsumo, getInsumos, postInsumo, putInsumo, deleteInsumo } = require('../controllers/insumos');
+const {
+    getInsumo,
+    getInsumos,
+    postInsumo,
+    putInsumo,
+    deleteInsumo
+} = require('../controllers/insumos');
 
-route.get('/insumo', getInsumos);
-route.get('/insumo/:id', getInsumo);
-route.post('/insumo', postInsumo);
-route.put('/insumo/:id', putInsumo);
-route.delete('/insumo/:id', deleteInsumo);
+router.get('/insumos', getInsumos);
+router.get('/insumos/:id', getInsumo);
+router.post('/insumos', postInsumo);
+router.put('/insumos/:id', putInsumo);
+router.delete('/insumos/:id', deleteInsumo);
 
-module.exports = route;
+module.exports = router;
