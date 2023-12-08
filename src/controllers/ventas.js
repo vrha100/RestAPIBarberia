@@ -16,6 +16,7 @@ const getVentas = async (req, res = response) => {
   }
 }
 
+
 const getVenta = async (req, res = response) => {
   const { id } = req.params;
 
@@ -32,6 +33,8 @@ const getVenta = async (req, res = response) => {
     res.status(500).json({ error: 'Error al obtener el elemento de Venta' });
   }
 }
+
+
 
 const postVentas = async (req, res = response) => {
   // Obtener datos de la solicitud
@@ -54,6 +57,7 @@ const postVentas = async (req, res = response) => {
       numeroFactura: nueva_venta.numeroFactura,
       precio: precio,
       estado: 'Pendiente',
+      estado_anulado: 'Activo',
       nombre: cliente.nombre,
       apellido: cliente.apellido,
       documento: cliente.documento
@@ -65,13 +69,13 @@ const postVentas = async (req, res = response) => {
     if (productos.length > 0) {
       console.log('Entramos al detalle de productos')
       for (let producto of productos) {
-        var valor_total = producto.cantidad * producto.precio;
+        var valor_total = producto.cantidad * producto.precioTotal;
         try {
           let detalle_prod = await DetalleProducto.create({
             id_ventas: id_venta,
-            id_producto: producto.id_producto,
+            id_producto: producto.id,
             cantidad: producto.cantidad,
-            valor_venta: producto.precio,
+            valor_venta: producto.precioTotal,
             valor_total: valor_total
           });
           console.log('producto registrado')
@@ -79,7 +83,7 @@ const postVentas = async (req, res = response) => {
           console.error('Error al registrar el producto:', error);
           continue;
         }
-        const productoActual = await Producto.findByPk(producto.id_producto);
+        const productoActual = await Producto.findByPk(producto.id);
         if (productoActual) {
           productoActual.stock -= producto.cantidad;
           await productoActual.save();
@@ -93,13 +97,13 @@ const postVentas = async (req, res = response) => {
     if (servicios.length > 0) {
       console.log('Entramos al detalle de servicios')
       for (let servicio of servicios) {
-        var valor_total = servicio.cantidad * servicio.precio;
+        var valor_total = servicio.cantidad * servicio.precioTotal;
         try {
           await DetalleServicio.create({
             id_ventas: id_venta,
             id_servicio: servicio.id,
             cantidad: servicio.cantidad,
-            valor_venta: servicio.precio,
+            valor_venta: servicio.precioTotal,
             valor_total: valor_total
           });
           console.log('servicio registrado')
@@ -137,46 +141,6 @@ function calculateTotalPrice(productos, servicios) {
 }
 
 
-const anularVenta = async (req, res = response) => {
-  const id_ventas = req.params.id; // Supongo que el ID de la venta se pasa como un parámetro en la URL
-
-  try {
-    const venta = await Venta.findByPk(id_ventas);
-
-    if (!venta) {
-      return res.status(404).json({ error: 'La venta no fue encontrada' });
-    }
-
-    // Eliminar la venta
-    await venta.destroy();
-
-    return res.json({ message: 'Venta eliminada con éxito' });
-  } catch (error) {
-    return res.status(500).json({ error: `Error al eliminar la venta: ${error.message}` });
-  }
-}
-
-const cambiarEstado = async (req, res = response) =>{
-  const id_ventas = req.params.id;
-
-  try {
-      const venta = await Venta.findByPk(id_ventas);
-
-      if (venta) {
-          venta.toggleEstado(); 
-          res.json({
-              msg: `Estado de la venta actualizado exitosamente. Nuevo estado: ${venta.estado}`,
-              venta: venta
-          });
-      } else {
-          res.status(404).json({ error: `No se encontró la venta con el ID: ${id_ventas}` });
-      }
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Error al actualizar el estado de la venta.' });
-  }
-}
-
 const cancelarVenta = async (req, res = response) => {
   const  { id_ventas } = req.params;
   console.log(id_ventas)
@@ -198,9 +162,30 @@ const cancelarVenta = async (req, res = response) => {
   }
 }
 
+const cambiarEstado = async (req, res = response) => {
+  const id_ventas = req.params.id_ventas;
+
+  try {
+    const ventas = await Venta.findByPk(id_ventas);
+
+    if (ventas) {
+      ventas.toggleEstadoAnulado();
+      res.json({
+        msg: `El estado ha sido anulado, nuevo estado: ${ventas.estado_anulado}`,
+        ventas: ventas
+      });
+    } else {
+      res.status(404).json({ error: `no se encontro la venta con el ID: ${id_ventas}` });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al actualizar la venta ha anulada' });
+  }
+};
+
 module.exports = {
   getVentas,
   postVentas,
-  anularVenta,
-  cancelarVenta
+  cancelarVenta,
+  cambiarEstado
 };

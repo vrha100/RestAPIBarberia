@@ -1,7 +1,7 @@
 const {Router} = require('express')
 const route = Router()
 
-const { getEmpleados, getEmpleado, postEmpleado, putEmpleado, cambiarEstadoEmpleado, getEmpleadoAgenda } = require ('../controllers/empleados')
+const { getEmpleados, getEmpleado, postEmpleado, putEmpleado, cambiarEstadoEmpleado } = require ('../controllers/empleados')
 
 route.get('/empleado', getEmpleados);
 route.get('/empleado/:id', getEmpleado);
