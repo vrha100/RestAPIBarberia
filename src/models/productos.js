@@ -22,24 +22,24 @@ const Productos = sequelize.define('productos', {
 
   descripcion: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: false, // Cambiado a allowNull: true
   },
 
   precio: {
     type: DataTypes.FLOAT,
-    allowNull: false,
+    allowNull: true, // Cambiado a allowNull: true
   },
   stock: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true, // Cambiado a allowNull: true
   },
   stockMax: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: false, // Cambiado a allowNull: true
   },
   stockMin: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: false, // Cambiado a allowNull: true
   },
   estado: {
     type: DataTypes.ENUM('Activo', 'Inactivo'),
