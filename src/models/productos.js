@@ -27,11 +27,11 @@ const Productos = sequelize.define('productos', {
 
   precio: {
     type: DataTypes.FLOAT,
-    allowNull: true, // Cambiado a allowNull: true
+    allowNull: true, // Permitir valores nulos
   },
   stock: {
     type: DataTypes.INTEGER,
-    allowNull: true, // Cambiado a allowNull: true
+    allowNull: true, // Permitir valores nulos
   },
   stockMax: {
     type: DataTypes.INTEGER,
