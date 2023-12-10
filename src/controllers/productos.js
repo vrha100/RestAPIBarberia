@@ -58,9 +58,10 @@ const postProducto = async (req, res = response) => {
         res.status(201).json({ message: 'Producto guardado exitosamente', producto: createdProductoItem });
     } catch (error) {
         console.error(error);
-        res.status(400).json({ error: 'Error al crear un elemento de Producto' });
+        res.status(400).json({ error: 'Error al crear un elemento de Producto', message: error.message });
     }
 }
+
 
 const deleteProducto = async (req, res = response) => {
     const { id } = req.params;
