@@ -1,10 +1,13 @@
 const CitasServicios = require('../models/citas_servicios');
 const { response } = require('express');
+const Clientes = require('../models/clientes');
+const Empleado = require('../models/empleados');
+const Servicios = require('../models/servicios');
 
 const getCitasServicios = async (req, res = response) => {
   try {
     const listCitasServicios = await CitasServicios.findAll();
-    res.json({ listCitasServicios });
+    res.json({ listCitasServicios } );
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al obtener la lista de citas de servicios' });

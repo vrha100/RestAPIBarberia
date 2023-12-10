@@ -8,7 +8,9 @@ const Clientes = require('../models/clientes');
 
 const getVentas = async (req, res = response) => {
   try {
-    const ventas = await Venta.findAll();
+    const ventas = await Venta.findAll({ 
+      include: [DetalleProducto, DetalleServicio],
+    });
     res.json({ ventas });
   } catch (error) {
     console.error(error);

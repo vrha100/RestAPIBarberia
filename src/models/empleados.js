@@ -34,7 +34,7 @@ const Empleado = sequelize.define('empleados', {
     allowNull: false,
     unique: true,
     validate: {
-        is: /^\d{10}$/,
+        is: /^\d{1,10}$/,
     },
   },
   telefono: {
@@ -42,7 +42,7 @@ const Empleado = sequelize.define('empleados', {
     allowNull: false,
     required: true,
     validate: {
-      is: /^\d{10}$/,
+      is: /^\d{1,10}$/,
     },
   },
   estado: {

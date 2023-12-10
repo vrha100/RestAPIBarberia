@@ -2,6 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../database/config');
 
 const DetalleProducto = require('./detalleProducto');
+const DetalleServicio = require('./detalleServicio');
 
 const Venta = sequelize.define('ventas', {
   id_ventas: {
@@ -81,6 +82,7 @@ const Venta = sequelize.define('ventas', {
 },);
 
 Venta.hasMany(DetalleProducto, {foreignKey: 'id_ventas'});
+Venta.hasMany(DetalleServicio, {foreignKey: 'id_ventas'});
 
 Venta.prototype.toggleEstadoAnulado = async function () {
   this.estado_anulado = this.estado_anulado === 'Activo' ? 'Inactivo' : 'Activo';
