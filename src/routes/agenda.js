@@ -16,3 +16,4 @@ route.put('/agenda/:id/disabled', disableEvent);
 
 
 module.exports = route;
+
