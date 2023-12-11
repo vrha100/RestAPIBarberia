@@ -28,6 +28,7 @@ const Citas = sequelize.define('Citas', {
   estado: {
     type: DataTypes.STRING,
     allowNull: false,
+    defaultValue: 'Agendada'
   },
 });
 
