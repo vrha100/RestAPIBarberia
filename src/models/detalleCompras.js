@@ -27,6 +27,10 @@ const Detallecompras = sequelize.define(
       type: DataTypes.FLOAT,
       allowNull: false,
     },
+    precioVenta: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+    },
     total: {
       type: DataTypes.FLOAT,
       allowNull: false,
