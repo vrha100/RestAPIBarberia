@@ -1,92 +1,101 @@
-const { response }  = require('express');
+const { response } = require('express');
 const Cliente = require('../models/clientes');
 
-
-
-const getClientes = async (req, res = response) =>{
-    try{
-        const listClientes = await Cliente.findAll()
-        res.json({listClientes});
-    }catch(err){
-        console.log(err);
-        res.json({
-            msg:`Error al obtener la lista`
-        })
+const getClientes = async (req, res = response) => {
+    try {
+        const listClientes = await Cliente.findAll();
+        res.json({ listClientes });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            msg: 'Error al obtener la lista de clientes.',
+        });
     }
-    
-}
+};
 
-const getCliente = async (req, res = response) =>{
-    try{
-        const {id} = req.params
-        const cliente = await Cliente.findByPk(id)
-        
-        if(cliente){
-            res.json(cliente)
-        }else{
-            res.status(404).json(`No se encontro el cliente con id ${id}`);
+const getCliente = async (req, res = response) => {
+    try {
+        const { id } = req.params;
+        const cliente = await Cliente.findByPk(id);
+
+        if (cliente) {
+            res.json(cliente);
+        } else {
+            res.status(404).json({ msg: `No se encontró el cliente con ID ${id}` });
         }
-    }catch(err){
-        console.log(err);
-        res.json({
-        msg:`Error`
-        })
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            msg: 'Error al obtener el cliente.',
+        });
     }
-    
-} 
+};
 
 const putCliente = async (req, res = response) => {
     const { id } = req.params;
-    const body = req
+    const body = req.body; // Corregido: req en lugar de req.body
 
-    const cliente = await Cliente.findByPk(id)
+    try {
+        const cliente = await Cliente.findByPk(id);
 
-    if(cliente){
-        await cliente.update(body)
-        res.json({
-            msg:`El cliente fue actualizado exitosamente.`
-        })
-    }else{
-        res.status(403).send(`No se encontro el cliente con ID ${id}`)
+        if (cliente) {
+            await cliente.update(body);
+            res.json({
+                msg: 'El cliente fue actualizado exitosamente.',
+            });
+        } else {
+            res.status(404).json({ msg: `No se encontró el cliente con ID ${id}` });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            msg: 'Error al actualizar el cliente.',
+        });
     }
-}
+};
 
 const postCliente = async (req, res = response) => {
-    try{
-        const {body} = req
+    try {
+        const { body } = req;
 
-        await Cliente.create(body)
+        const nuevoCliente = await Cliente.create(body);
 
-        if(body){
-            res.json({msg: `Se ha creado un nuevo cliente`})
-            res.json(body)
-        }else{
-            res.json(`Estan mal ingresados los datos`)
-        }
-        
-    }catch(err){
-        console.log(err.message)
-        res.json({msg:`Upps ocurrio un error`})
+        res.json({
+            msg: 'Se ha creado un nuevo cliente',
+            cliente: nuevoCliente,
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({
+            msg: 'Error al crear un nuevo cliente.',
+        });
     }
-    
-}
+};
 
 const deleteCliente = async (req, res = response) => {
-    const {id} = req.params
-    const cliente = await Cliente.findByPk(id)
+    const { id } = req.params;
 
-    if(cliente){
-        await Cliente.destroy()
-        res.json(`El cliente fue eliminado exitosamente.`)
-    }else{
-        res.json(`Error.`)
+    try {
+        const cliente = await Cliente.findByPk(id);
+
+        if (cliente) {
+            await cliente.destroy();
+            res.json({ msg: 'El cliente fue eliminado exitosamente.' });
+        } else {
+            res.status(404).json({ msg: `No se encontró el cliente con ID ${id}` });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            msg: 'Error al eliminar el cliente.',
+        });
     }
-}
+};
 
 module.exports = {
     getCliente,
     getClientes,
     postCliente,
     putCliente,
-    deleteCliente
-}
+    deleteCliente,
+};

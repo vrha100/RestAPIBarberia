@@ -29,8 +29,8 @@ const getEmpleado = async (req, res = response) => {
 }
 
 const postEmpleado = async (req, res = response) => {
-    const { nombre, apellido, correo, documento, telefono, estado } = req.body;
-    console.log(nombre, apellido, correo, documento, telefono, estado)
+    const { nombre, apellido, correo, documento, telefono } = req.body;
+    console.log(nombre, apellido, correo, documento, telefono)
 
     try {
         const crearempleado = await Empleado.create({
@@ -38,8 +38,7 @@ const postEmpleado = async (req, res = response) => {
             apellido: apellido,
             correo: correo, 
             documento: documento, 
-            telefono: telefono, 
-            estado: estado
+            telefono: telefono
         });
         res.status(201).json({ message: 'Empleado agregado exitosamente', empleado: crearempleado });
     } catch (error) {

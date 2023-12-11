@@ -39,7 +39,7 @@ const DetalleServicio = sequelize.define('detalleservicio', {
 },{
     sequelize,
     tableName: 'detalleservicio',
-    Timestamps: false,
+    Timestamps: true,
     indexes: [
         {
             name: "detalleservicio_pkey",

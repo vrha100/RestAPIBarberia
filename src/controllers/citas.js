@@ -1,5 +1,6 @@
 const Citas = require('../models/citas');
 const { response } = require('express');
+const Citas_Servicios = require('../models/citas_servicios');
 
 const getCitas = async (req, res = response) => {
   try {
@@ -27,6 +28,25 @@ const getCita = async (req, res = response) => {
 }
 
 const putCita = async (req, res = response) => {
+  const { id } = req.params;
+  const body = req.body;
+
+  try {
+    const cita = await Citas.findByPk(id);
+
+    if (cita) {
+      await cita.update(body);
+      res.json({ msg: 'La cita fue actualizada exitosamente' });
+    } else {
+      res.status(404).json({ error: `No se encontró la cita con ID ${id}` });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al actualizar la cita' });
+  }
+}
+
+const putCitaEstado = async (req, res = response) => {
   const { id } = req.params;
   const body = req.body;
 
@@ -80,5 +100,6 @@ module.exports = {
   getCitas,
   postCita,
   putCita,
+  putCitaEstado,
   deleteCita
 };

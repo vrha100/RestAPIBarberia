@@ -4,16 +4,20 @@ const DetalleServicio = require('../models/detalleServicio');
 const Producto = require('../models/productos')
 
 const { response } = require('express');
+const Clientes = require('../models/clientes');
 
 const getVentas = async (req, res = response) => {
   try {
-    const ventas = await Venta.findAll();
+    const ventas = await Venta.findAll({ 
+      include: [DetalleProducto, DetalleServicio],
+    });
     res.json({ ventas });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al obtener elementos de Venta' });
   }
 }
+
 
 const getVenta = async (req, res = response) => {
   const { id } = req.params;
@@ -32,13 +36,21 @@ const getVenta = async (req, res = response) => {
   }
 }
 
+
+
 const postVentas = async (req, res = response) => {
   // Obtener datos de la solicitud
   const { nueva_venta } = req.body;
   try {
+    const cliente = await Clientes.findByPk(nueva_venta.clienteId);
+    if (!cliente) {
+      return res.status(404).json({ error: 'Cliente no encontrado' });
+    }
     // Crear la venta
     const productos = nueva_venta.productos;
     const servicios = nueva_venta.servicios;
+    console.log('Productos: ', productos)
+    console.log('Servicios: ', servicios)
     const precio = calculateTotalPrice(productos, servicios);
     const venta = await Venta.create({
       id_cita: nueva_venta.citaId,
@@ -47,9 +59,10 @@ const postVentas = async (req, res = response) => {
       numeroFactura: nueva_venta.numeroFactura,
       precio: precio,
       estado: 'Pendiente',
-      nombre: nueva_venta.nombre,
-      apellido: nueva_venta.apellido,
-      documento: nueva_venta.documento
+      estado_anulado: 'Activo',
+      nombre: cliente.nombre,
+      apellido: cliente.apellido,
+      documento: cliente.documento
     });
     let id_venta = venta.get('id_ventas');
     console.log(productos)
@@ -58,13 +71,13 @@ const postVentas = async (req, res = response) => {
     if (productos.length > 0) {
       console.log('Entramos al detalle de productos')
       for (let producto of productos) {
-        var valor_total = producto.cantidad * producto.precio;
+        var valor_total = producto.cantidad * producto.precioTotal;
         try {
           let detalle_prod = await DetalleProducto.create({
             id_ventas: id_venta,
-            id_producto: producto.id_producto,
+            id_producto: producto.id,
             cantidad: producto.cantidad,
-            valor_venta: producto.precio,
+            valor_venta: producto.precioTotal,
             valor_total: valor_total
           });
           console.log('producto registrado')
@@ -72,7 +85,7 @@ const postVentas = async (req, res = response) => {
           console.error('Error al registrar el producto:', error);
           continue;
         }
-        const productoActual = await Producto.findByPk(producto.id_producto);
+        const productoActual = await Producto.findByPk(producto.id);
         if (productoActual) {
           productoActual.stock -= producto.cantidad;
           await productoActual.save();
@@ -86,13 +99,13 @@ const postVentas = async (req, res = response) => {
     if (servicios.length > 0) {
       console.log('Entramos al detalle de servicios')
       for (let servicio of servicios) {
-        var valor_total = servicio.cantidad * servicio.precio;
+        var valor_total = servicio.cantidad * servicio.precioTotal;
         try {
           await DetalleServicio.create({
             id_ventas: id_venta,
             id_servicio: servicio.id,
             cantidad: servicio.cantidad,
-            valor_venta: servicio.precio,
+            valor_venta: servicio.precioTotal,
             valor_total: valor_total
           });
           console.log('servicio registrado')
@@ -119,57 +132,62 @@ const postVentas = async (req, res = response) => {
 function calculateTotalPrice(productos, servicios) {
   let totalPrice = 0;
   for (const producto of productos) {
-    totalPrice += producto.cantidad * producto.precio;
+    const precioFloat = parseFloat(producto.precioTotal);
+    totalPrice += producto.cantidad * precioFloat;
   }
   for (const servicio of servicios){
-    totalPrice += servicio.cantidad * servicio.precio;
+    const precioFloat = parseFloat(servicio.precioTotal);
+    totalPrice += servicio.cantidad * precioFloat;
   }
   return totalPrice;
 }
 
 
-const anularVenta = async (req, res = response) => {
-  const id_ventas = req.params.id; // Supongo que el ID de la venta se pasa como un parámetro en la URL
-
+const cancelarVenta = async (req, res = response) => {
+  const  { id_ventas } = req.params;
+  console.log(id_ventas)
   try {
     const venta = await Venta.findByPk(id_ventas);
-
     if (!venta) {
-      return res.status(404).json({ error: 'La venta no fue encontrada' });
+      return res.status(404).json({ error: 'Venta no encontrada' });
     }
+    if (venta.estado === 'Cancelado') {
+      return res.status(400).json({ error: 'La venta ya está cancelada' });
+    }
+    venta.estado = 'Cancelado';
+    await venta.save();
 
-    // Eliminar la venta
-    await venta.destroy();
-
-    return res.json({ message: 'Venta eliminada con éxito' });
+    return res.json({ message: 'Venta cancelada exitosamente' });
   } catch (error) {
-    return res.status(500).json({ error: `Error al eliminar la venta: ${error.message}` });
+    console.error(error);
+    return res.status(500).json({ error: 'Error interno del servidor' });
   }
 }
 
-const cambiarEstado = async (req, res = response) =>{
-  const id_ventas = req.params.id;
+const cambiarEstado = async (req, res = response) => {
+  const id_ventas = req.params.id_ventas;
 
   try {
-      const venta = await Venta.findByPk(id_ventas);
+    const ventas = await Venta.findByPk(id_ventas);
 
-      if (venta) {
-          venta.toggleEstado(); 
-          res.json({
-              msg: `Estado de la venta actualizado exitosamente. Nuevo estado: ${venta.estado}`,
-              venta: venta
-          });
-      } else {
-          res.status(404).json({ error: `No se encontró la venta con el ID: ${id_ventas}` });
-      }
+    if (ventas) {
+      ventas.toggleEstadoAnulado();
+      res.json({
+        msg: `El estado ha sido anulado, nuevo estado: ${ventas.estado_anulado}`,
+        ventas: ventas
+      });
+    } else {
+      res.status(404).json({ error: `no se encontro la venta con el ID: ${id_ventas}` });
+    }
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Error al actualizar el estado de la venta.' });
+    console.error(error);
+    res.status(500).json({ error: 'Error al actualizar la venta ha anulada' });
   }
-}
+};
 
 module.exports = {
   getVentas,
   postVentas,
-  anularVenta
+  cancelarVenta,
+  cambiarEstado
 };

@@ -10,12 +10,8 @@ const Clientes = sequelize.define('clientes', {
     primaryKey: true,
   },
   documento: {
-    type: DataTypes.STRING(20),
-    allowNull: false,
-    unique: true,
-    validate: {
-        is: /^\d{10}$/,
-    },
+    type: DataTypes.INTEGER,
+    allowNull: false
   },
   nombre: {
     type: DataTypes.STRING,
@@ -26,8 +22,8 @@ const Clientes = sequelize.define('clientes', {
     allowNull: false
   },
   telefono: {
-    type: DataTypes.STRING,
-    allowNull: false    
+    type: DataTypes.INTEGER,
+    allowNull: false 
   },
   estado: {
     type: DataTypes.BOOLEAN,

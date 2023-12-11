@@ -1,5 +1,6 @@
 const Producto = require('../models/productos');
 const { response } = require('express');
+const Proveedores = require('../models/proveedores');
 
 
 const getProductos = async (req, res = response) => {
@@ -57,10 +58,14 @@ const postProducto = async (req, res = response) => {
         const createdProductoItem = await Producto.create(newEntryData);
         res.status(201).json({ message: 'Producto guardado exitosamente', producto: createdProductoItem });
     } catch (error) {
-        console.error(error);
-        res.status(400).json({ error: 'Error al crear un elemento de Producto' });
+        console.error('Error al crear el producto:', error.message);
+        console.error('Stack trace:', error.stack);
+        res.status(500).json({ error: 'Error interno al crear el producto' });
     }
 }
+
+
+
 
 const deleteProducto = async (req, res = response) => {
     const { id } = req.params;
@@ -82,7 +87,7 @@ const deleteProducto = async (req, res = response) => {
 
 const obtenerProveedores = async (req, res = response) => {
     try {
-        const proveedores = await Proveedor.findAll(); // Utiliza el método correspondiente para obtener proveedores
+        const proveedores = await Proveedores.findAll();
         res.json({ proveedores });
     } catch (error) {
         console.error(error);

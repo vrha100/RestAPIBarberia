@@ -19,6 +19,10 @@ class Server {
     listen() {
         this.app.listen(this.port, () => {
             console.log(`Esta escchando por el puerto ${this.port}`)
+    listen(){
+        this.app.listen(this.port,()=>{
+          console.log(`Está escuchando por el puerto ${this.port}`);
+
         }
         )
     }

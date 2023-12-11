@@ -1,6 +1,7 @@
 const Compras = require('../models/compras');
 const { response } = require('express');
 const Detallecompras = require('../models/detalleCompras');
+const Productos = require('../models/productos')
 
 const getCompras = async (req, res = response) => {
   try {
@@ -85,12 +86,36 @@ const cambiarEstadoCompra = async (req, res = response) => {
   const { estado } = req.body;
 
   try {
-    const compra = await Compras.findByPk(id);
+    const compra = await Compras.findByPk(id, {
+      include: [Detallecompras], // Incluir detalles de compra
+    });
 
     if (compra) {
-      // Actualiza solo el campo 'estado'
-      await compra.update({ estado: estado });
-      res.json({ msg: 'El estado de la compra fue actualizado exitosamente' });
+      // Verificar si el estado actual es diferente de "Pagado"
+      if (compra.estado !== 'Pagado') {
+        // Actualizar solo el campo 'estado'
+        await compra.update({ estado: estado });
+
+        // Iterar a través de los detalles de compra y actualizar los productos
+        for (const detalle of compra.detallecompras) {
+          const producto = await Productos.findByPk(detalle.id_producto);
+
+          if (producto) {
+            // Actualizar stock, precioCosto, precios, o cualquier otra lógica que necesites
+            // Aquí se supone que tienes métodos o lógica en tu modelo de Producto
+            // para actualizar la información según tus necesidades.
+            await producto.update({
+              stock: producto.stock + detalle.cantidad,
+              precioCosto: detalle.precioUnitario, // Suponiendo que precioUnitario es el costo de compra
+              precioVenta: detalle.precioVenta,
+            });
+          }
+        }
+
+        res.json({ msg: 'El estado de la compra fue actualizado y productos actualizados exitosamente' });
+      } else {
+        res.status(400).json({ error: 'La compra ya está marcada como Pagada' });
+      }
     } else {
       res.status(404).json({ error: `No se encontró la compra con ID ${id}` });
     }
@@ -98,7 +123,7 @@ const cambiarEstadoCompra = async (req, res = response) => {
     console.error(error);
     res.status(500).json({ error: 'Error al actualizar el estado de la compra', detalle: error.message });
   }
-}
+};
 
 const postCompra = async (req, res = response) => {
   const body = req.body;

@@ -1,6 +1,9 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../database/config');
 
+const Clientes = require('./clientes');
+const Empleados = require('./empleados');
+
 const Citas = sequelize.define('Citas', {
   id_cita: {
     type: DataTypes.INTEGER,
@@ -16,22 +19,22 @@ const Citas = sequelize.define('Citas', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  id_agenda: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
+  Fecha_Atencion: {
+    type: DataTypes.DATE,
+  },
+  Hora_Atencion: {
+    type: DataTypes.TIME,
   },
   estado: {
     type: DataTypes.STRING,
     allowNull: false,
+    defaultValue: 'Agendada'
   },
-}, {
-  timestamps: false,
 });
 
 // Vincular las llaves foráneas
-Citas.belongsTo(Citas, { foreignKey: 'id_empleado', as: 'empleados' });
-Citas.belongsTo(Citas, { foreignKey: 'id_cliente', as: 'clientes' });
-Citas.belongsTo(Citas, { foreignKey: 'id_agenda', as: 'Agenda' });
+Citas.belongsTo(Empleados, { foreignKey: 'id_empleado', as: 'empleados' });
+Citas.belongsTo(Clientes, { foreignKey: 'id_cliente', as: 'clientes' });
 
 // Ahora las llaves foráneas están vinculadas
 

@@ -8,29 +8,44 @@ const Productos = sequelize.define('productos', {
     autoIncrement: true,
     primaryKey: true
   },
+
   id_proveedor: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+
   nombre: {
-    type: DataTypes.STRING(255),
-    allowNull: false
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
   },
+
   descripcion: {
-    type: DataTypes.TEXT
+    type: DataTypes.STRING,
+    allowNull: false, 
   },
-  precio: {
-    type: DataTypes.DECIMAL(10, 2),
-    allowNull: false
+
+  precioCosto: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+    defaultValue: 0, 
   },
+
+  precioVenta: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+    defaultValue: 0, 
+  },
+  
   stock: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: true, 
   },
+
   estado: {
-    type: DataTypes.STRING,
+    type: DataTypes.ENUM('Activo', 'Inactivo'),
     defaultValue: 'Activo',
-  }
+  },
 });
 
 Productos.belongsTo(Proveedor, { foreignKey: "id_proveedor" });

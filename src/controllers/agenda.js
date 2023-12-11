@@ -1,5 +1,6 @@
 const Agenda = require('../models/agenda');
 const { response } = require('express');
+const Empleado = require('../models/empleados');
 
 const getAgendas = async (req, res = response) => {
     try {
@@ -10,6 +11,30 @@ const getAgendas = async (req, res = response) => {
         res.status(500).json({ error: 'Error al obtener elementos de Agenda' });
     }
 };
+
+const getAgendaEmpleado = async (req, res = response) => {
+    const { id } = req.params;
+
+    try {
+        // Busca la agenda por ID junto con los datos del empleado asociado
+        const agenda = await Agenda.findByPk(id, {
+            include: [{
+                model: Empleado, // Modelo de empleado
+                attributes: ['id_empleado', 'nombre', 'apellido', 'correo', 'documento', 'telefono', 'estado'], // Selecciona los campos que deseas obtener
+            }],
+        });
+
+        if (agenda) {
+            res.json(agenda);
+        } else {
+            res.status(404).json({ error: `No se encontró un elemento de Agenda con ID ${id}` });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener el elemento de Agenda con datos de empleado' });
+    }
+};
+
 
 const getAgenda = async (req, res = response) => {
     const { id } = req.params;
@@ -48,8 +73,6 @@ const putAgenda = async (req, res = response) => {
         res.status(500).json({ error: 'Error al actualizar el elemento de Agenda' });
     }
 };
-
-
 
 const postAgenda = async (req, res = response) => {
     const newEntryData = req.body;
@@ -119,6 +142,7 @@ module.exports = {
     disableEvent,
     getAgenda,
     getAgendas,
+    getAgendaEmpleado,
     postAgenda,
     putAgenda,
     deleteAgenda
