@@ -99,5 +99,6 @@ module.exports = {
   getCitas,
   postCita,
   putCita,
+  putCitaEstado,
   deleteCita
 };
