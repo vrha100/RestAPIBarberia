@@ -1,6 +1,7 @@
 const Compras = require('../models/compras');
 const { response } = require('express');
 const Detallecompras = require('../models/detalleCompras');
+const Productos = require('../models/productos')
 
 const getCompras = async (req, res = response) => {
   try {
