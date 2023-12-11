@@ -10,7 +10,7 @@ const Permiso = sequelize.define('Permiso', {
     nombre_permiso: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
+        unique: false,
         validate: {
             notEmpty: true,
         },

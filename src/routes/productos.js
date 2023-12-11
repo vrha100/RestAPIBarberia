@@ -1,8 +1,9 @@
 const { Router } = require('express');
 const route = Router();
-
+const verificarToken = require('../middlewares/verificarToken');
 const { getProductos, getProducto, postProducto, putProducto, deleteProducto } = require('../controllers/productos');
 
+route.use(verificarToken);
 route.get('/producto', getProductos);
 route.get('/producto/:id', getProducto);
 route.post('/producto', postProducto);

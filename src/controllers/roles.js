@@ -1,5 +1,5 @@
 const Rol = require('../models/roles');
-const Usuario = require('../models/usuarios');
+const Permiso = require('../models/permisos');
 const { response } = require('express');
 
 
@@ -48,15 +48,23 @@ const putRol = async (req, res = response) => {
 }
 
 const postRol = async (req, res = response) => {
-    const { nombre, estado } = req.body;
+    const { nombre, estado, permisos } = req.body;
+  
     try {
-        const newRol = await Rol.create({ nombre, estado });
-        res.json(newRol);
+      // Crea el rol
+      const nuevoRol = await Rol.create({ nombre, estado });
+  
+      // Asigna permisos al rol
+      if (permisos && permisos.length > 0) {
+        await nuevoRol.setPermisos(permisos);
+      }
+  
+      res.json(nuevoRol);
     } catch (error) {
-        console.error("Error al crear el rol:", error);
-        res.status(500).json({ error: "Error interno del servidor" });
+      console.error("Error al crear el rol:", error);
+      res.status(500).json({ error: "Error interno del servidor" });
     }
-}
+  };
 
 const deleteRol = async (req, res = response) => {
     const { id } = req.params;
@@ -73,24 +81,34 @@ const deleteRol = async (req, res = response) => {
         res.status(500).json({ error: 'Error al eliminar el rol' });
     }
 }
-const asignarRolUsuario = async (req, res = response) => {
-    const { id, id_rol } = req.body;
 
+
+const asignarPermisoRol = async (req, res = response) => {
+    const { id_rol, id_permisos } = req.body;
+  
     try {
-        const usuario = await Usuario.findByPk(id);
-        const rol = await Rol.findByPk(id_rol);
-
-        if (usuario && rol) {
-            await usuario.update({ id_rol });
-            res.json({ message: `Se ha asignado el rol con ID ${id_rol} al usuario con ID ${id}` });
-        } else {
-            res.status(404).json({ error: 'No se encontró un usuario o rol con el ID proporcionado' });
-        }
+      // Busca el rol por su ID
+      const rol = await Rol.findByPk(id_rol, { include: 'permisos' });
+  
+      if (!rol) {
+        // Si no se encuentra el rol, devuelve un error
+        return res.status(404).json({ error: "No se encontró un rol con el ID proporcionado" });
+      }
+  
+      // Asigna los permisos al rol
+      await rol.setPermisos(id_permisos);
+  
+      // Retorna el rol actualizado con sus permisos
+      const rolConPermisos = await Rol.findByPk(id_rol, {
+        include: [{ model: Permiso, as: 'permisos' }],
+      });
+  
+      res.json(rolConPermisos);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Ha ocurrido un error al intentar asignar el rol al usuario' });
+      console.error("Error al asignar permisos al rol:", error);
+      res.status(500).json({ error: "Error interno del servidor" });
     }
-}
+  };
 
 module.exports = {
     getRol,
@@ -98,6 +116,6 @@ module.exports = {
     postRol,
     putRol,
     deleteRol,
-    asignarRolUsuario
+    asignarPermisoRol
 };
 

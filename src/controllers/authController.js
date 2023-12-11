@@ -1,9 +1,8 @@
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 const { sequelize } = require('../database/config');
 const Usuario = require('../models/usuarios');
 const { response } = require('express');
-
+const bcrypt = require('bcrypt');
 async function iniciarSesion(req, res = response) {
   const { nombre_usuario, contrasena } = req.body;
 
@@ -25,6 +24,12 @@ async function iniciarSesion(req, res = response) {
 
     // Verificar la contraseña del usuario
     if (bcrypt.compareSync(contrasena, usuarioEncontrado.contrasena)) {
+      // Verificar el estado del usuario
+      if (usuarioEncontrado.estado === 'Inactivo') {
+        res.status(403).json({ mensaje: 'Usuario inactivo, no puede iniciar sesión' });
+        return;
+      }
+
       // Generar un token con la información del usuario
       const token = generarToken(usuarioEncontrado);
 
@@ -51,13 +56,21 @@ async function iniciarSesion(req, res = response) {
   }
 }
 
-// En tu función generarToken del lado del servidor
-function generarToken(usuario) {
+
+// Nueva función para generar token de restablecimiento
+function generarToken(usuario, tipoToken) {
   const { id_usuario, nombre_usuario, rol } = usuario;
-  return jwt.sign({ nombre_usuario, userId: id_usuario, rol }, 'secreto-seguro', { expiresIn: '1h' });
+
+  // Define la duración del token de restablecimiento (por ejemplo, 1 día)
+  const duracionTokenReset = '1d';
+
+  if (tipoToken === 'reset') {
+    return jwt.sign({ userId: id_usuario, tipo: 'reset' }, 'secreto-seguro', { expiresIn: duracionTokenReset });
+  }
+
+  return jwt.sign({ nombre_usuario, userId: id_usuario, rol }, 'secreto-seguro', { expiresIn: '24h' });
 }
-
-
+//
 
 module.exports = {
   iniciarSesion,
