@@ -53,18 +53,18 @@ const putProducto = async (req, res = response) => {
 
 const postProducto = async (req, res = response) => {
     const newEntryData = req.body;
-  
+
     try {
-      const createdProductoItem = await Producto.create(newEntryData);
-      res.status(201).json({ message: 'Producto guardado exitosamente', producto: createdProductoItem });
+        const createdProductoItem = await Producto.create(newEntryData);
+        res.status(201).json({ message: 'Producto guardado exitosamente', producto: createdProductoItem });
     } catch (error) {
-      console.error('Error al crear el producto:', error.message);
-      console.error('Stack trace:', error.stack);
-      res.status(500).json({ error: 'Error interno al crear el producto' });
+        console.error('Error al crear el producto:', error.message);
+        console.error('Stack trace:', error.stack);
+        res.status(500).json({ error: 'Error interno al crear el producto' });
     }
-  }
-  
-  
+}
+
+
 
 
 const deleteProducto = async (req, res = response) => {
@@ -87,13 +87,13 @@ const deleteProducto = async (req, res = response) => {
 
 const obtenerProveedores = async (req, res = response) => {
     try {
-      const proveedores = await Proveedores.findAll(); 
-      res.json({ proveedores });
+        const proveedores = await Proveedores.findAll();
+        res.json({ proveedores });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Error al obtener elementos de Proveedor' });
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener elementos de Proveedor' });
     }
-  }
+}
 
 module.exports = {
     obtenerProveedores,
