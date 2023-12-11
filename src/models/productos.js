@@ -26,13 +26,13 @@ const Productos = sequelize.define('productos', {
   },
 
   precioCosto: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.DOUBLE,
     allowNull: true,
     defaultValue: 0, 
   },
 
   precioVenta: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.DOUBLE,
     allowNull: true,
     defaultValue: 0, 
   },
