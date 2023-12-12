@@ -1,9 +1,10 @@
 const { Router } = require('express');
 const route = Router();
 
-const { getCita, getCitas, postCita, putCita, putCitaEstado, deleteCita } = require('../controllers/citas');
+const { getCita, getCitas, getCitasServcios, postCita, putCita, putCitaEstado, deleteCita } = require('../controllers/citas');
 
 route.get('/citas', getCitas);
+route.get('/citas/servicios', getCitasServcios);
 route.get('/citas/:id', getCita);
 route.post('/citas', postCita);
 route.put('/citas/:id/cambiarEstado', putCitaEstado);
