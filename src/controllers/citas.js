@@ -15,6 +15,37 @@ const getCitas = async (req, res = response) => {
   }
 }
 
+const getCitasServcios = async (req, res = response) => {
+  try {
+    // Obtener todas las compras
+    const citas = await Citas.findAll();
+
+    // Verificar si hay compras
+    if (!citas || citas.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron citas' });
+    }
+
+    const citasServicios = [];
+
+    for (const cita of citas) {
+      const citaServicio = await Citas_Servicios.findAll({
+        where: { id_cita: cita.id_cita },
+      });
+
+      citasServicios.push({
+        cita,
+        citaServicio,
+      });
+    }
+
+    res.json(citasServicios);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener las citas y sus servicios' });
+  }
+}
+
+  
 const getCitasHoy = async (req, res = response) => {
   const { cedula_cliente } = req.body;
   try {
@@ -38,7 +69,7 @@ const getCitasHoy = async (req, res = response) => {
     console.error(error);
     res.status(500).json({ error: 'Error al obtener la lista de citas' });
   }
-};
+}
 
 const getCita = async (req, res = response) => {
   const { id } = req.params;
@@ -126,9 +157,10 @@ const deleteCita = async (req, res = response) => {
 module.exports = {
   getCita,
   getCitas,
+  getCitasServcios,
   getCitasHoy,
   postCita,
   putCita,
   putCitaEstado,
-  deleteCita
+  deleteCita,
 };
