@@ -47,6 +47,19 @@ const postEmpleado = async (req, res = response) => {
     }
 }
 
+const getValidarDocumento = async (req, res = response) =>{
+    const {documento} = req.query;
+    try {
+        const empleado = await Empleado.findOne({ where: {documento} });
+        if (empleado) {
+            return res.status(400).json({documento: 'El documento ya existe'});
+        }
+    } catch (error){
+        console.error(error);
+        return
+    }
+}
+
 
 const putEmpleado = async (req, res = response) => {
     const id_empleado = req.params.id;
@@ -98,5 +111,6 @@ module.exports = {
     getEmpleados,
     postEmpleado,
     putEmpleado,
-    cambiarEstadoEmpleado
+    cambiarEstadoEmpleado,
+    getValidarDocumento
 };
