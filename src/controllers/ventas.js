@@ -2,13 +2,14 @@ const Venta = require('../models/ventas');
 const DetalleProducto = require('../models/detalleProducto');
 const DetalleServicio = require('../models/detalleServicio');
 const Producto = require('../models/productos')
+const Citas = require('../models/citas')
 
 const { response } = require('express');
 const Clientes = require('../models/clientes');
 
 const getVentas = async (req, res = response) => {
   try {
-    const ventas = await Venta.findAll({ 
+    const ventas = await Venta.findAll({
       include: [DetalleProducto, DetalleServicio],
     });
     res.json({ ventas });
@@ -116,6 +117,23 @@ const postVentas = async (req, res = response) => {
       }
     }
 
+    if (nueva_venta.citaId !== null) {
+      console.log("Id cita: ", nueva_venta.citaId);
+      try {
+        // Buscar la cita por su ID
+        const cita = await Citas.findByPk(nueva_venta.citaId);
+
+        if (cita) {
+          // Actualizar el estado de la cita a "Finalizado"
+          await cita.update({ estado: 'Finalizado' });
+        } else {
+          res.status(404).json({ error: `No se encontró la cita con ID ${id}` });
+        }
+      } catch (error) {
+        console.error('Error al registrar el servicio:', error);
+      }
+    }
+
     res.status(201).json({
       "message": 'Venta creada exitosamente',
       "venta": venta,
@@ -135,7 +153,7 @@ function calculateTotalPrice(productos, servicios) {
     const precioFloat = parseFloat(producto.precioTotal);
     totalPrice += producto.cantidad * precioFloat;
   }
-  for (const servicio of servicios){
+  for (const servicio of servicios) {
     const precioFloat = parseFloat(servicio.precioTotal);
     totalPrice += servicio.cantidad * precioFloat;
   }
@@ -144,7 +162,7 @@ function calculateTotalPrice(productos, servicios) {
 
 
 const cancelarVenta = async (req, res = response) => {
-  const  { id_ventas } = req.params;
+  const { id_ventas } = req.params;
   console.log(id_ventas)
   try {
     const venta = await Venta.findByPk(id_ventas);

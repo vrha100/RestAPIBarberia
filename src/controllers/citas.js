@@ -1,5 +1,7 @@
 const Citas = require('../models/citas');
 const { response } = require('express');
+const moment = require('moment');
+const { Op } = require('sequelize');
 const Citas_Servicios = require('../models/citas_servicios');
 
 const getCitas = async (req, res = response) => {
@@ -40,7 +42,37 @@ const getCitasServcios = async (req, res = response) => {
     console.error(error);
     res.status(500).json({ error: 'Error al obtener las citas y sus servicios' });
   }
-};
+}
+
+  
+const getCitasHoy = async (req, res = response) => {
+  try {
+    // Obtener la fecha actual en formato 'YYYY-MM-DD'
+    const fechaActual = moment().format('YYYY-MM-DD');
+
+    // Obtener las citas del día actual con estado "Programado"
+    const listCitas = await Citas.findAll({
+      where: {
+        [Op.and]: [
+          {
+            Fecha_Atencion: {
+              [Op.gte]: fechaActual + 'T00:00:00.000Z', // Mayor o igual que la fecha actual
+              [Op.lt]: fechaActual + 'T23:59:59.999Z', // Menor que el final del día
+            },
+          },
+          {
+            estado: 'Programada',
+          },
+        ],
+      },
+    });
+
+    res.json({ listCitas });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener la lista de citas' });
+  }
+}
 
 const getCita = async (req, res = response) => {
   const { id } = req.params;
@@ -129,8 +161,9 @@ module.exports = {
   getCita,
   getCitas,
   getCitasServcios,
+  getCitasHoy,
   postCita,
   putCita,
   putCitaEstado,
-  deleteCita
+  deleteCita,
 };
