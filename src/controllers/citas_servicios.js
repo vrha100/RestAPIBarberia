@@ -14,7 +14,9 @@ const getCitasServicios = async (req, res = response) => {
 const getCitaServicio = async (req, res = response) => {
   const { id } = req.params;
   try {
-    const citaServicio = await CitasServicios.findByPk(id);
+    const citaServicio = await CitasServicios.findOne({
+      where: { id_cita: id }
+    });
     if (citaServicio) {
       res.json(citaServicio);
     } else {

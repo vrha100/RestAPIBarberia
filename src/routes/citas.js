@@ -5,7 +5,7 @@ const { getCita, getCitas, getCitasHoy, postCita, putCitaEstado, putCita, delete
 
 route.get('/citas', getCitas);
 route.get('/citas/:id', getCita);
-route.get('/citashoy', getCitasHoy)
+route.post('/citashoy', getCitasHoy)
 route.post('/citas', postCita);
 route.put('/citas/:id/cambiarEstado', putCitaEstado);
 route.put('/citas/:id', putCita);

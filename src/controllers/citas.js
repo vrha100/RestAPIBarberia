@@ -1,4 +1,5 @@
 const Citas = require('../models/citas');
+const Clientes = require('../models/clientes');
 const { response } = require('express');
 const moment = require('moment');
 const { Op } = require('sequelize');
@@ -15,28 +16,24 @@ const getCitas = async (req, res = response) => {
 }
 
 const getCitasHoy = async (req, res = response) => {
+  const { cedula_cliente } = req.body;
   try {
-    // Obtener la fecha actual en formato 'YYYY-MM-DD'
-    const fechaActual = moment().format('YYYY-MM-DD');
+    const cliente = await Clientes.findOne({
+      where: { documento: cedula_cliente }
+    });
+    if (!cliente) {
+      return res.status(404).json({ error: 'Cliente no encontrado' });
+    }
 
-    // Obtener las citas del día actual con estado "Programado"
-    const listCitas = await Citas.findAll({
-      where: {
-        [Op.and]: [
-          {
-            Fecha_Atencion: {
-              [Op.gte]: fechaActual + 'T00:00:00.000Z', // Mayor o igual que la fecha actual
-              [Op.lt]: fechaActual + 'T23:59:59.999Z', // Menor que el final del día
-            },
-          },
-          {
-            estado: 'Programada',
-          },
-        ],
-      },
+    const ultimaCita = await Citas.findOne({
+      where: { id_cliente: cliente.id_cliente },
+      order: [['Fecha_Atencion', 'DESC']], 
     });
 
-    res.json({ listCitas });
+    if (!ultimaCita) {
+      return res.status(404).json({ error: 'No se encontraron citas para el cliente' });
+    }
+    res.json(ultimaCita);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al obtener la lista de citas' });
