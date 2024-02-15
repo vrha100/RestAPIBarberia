@@ -18,8 +18,13 @@ const Clientes = sequelize.define('clientes', {
     type:DataTypes.STRING,
     allowNull: false
   },
+  documento:{
+    type:DataTypes.STRING,
+    allowNull: false
+  },
+
   correo: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false
   },
   telefono: {
