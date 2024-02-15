@@ -1,11 +1,70 @@
 const Citas = require('../models/citas');
+const Clientes = require('../models/clientes');
 const { response } = require('express');
+const moment = require('moment');
+const { Op } = require('sequelize');
 const Citas_Servicios = require('../models/citas_servicios');
 
 const getCitas = async (req, res = response) => {
   try {
     const listCitas = await Citas.findAll();
     res.json({ listCitas });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener la lista de citas' });
+  }
+}
+
+const getCitasServcios = async (req, res = response) => {
+  try {
+    // Obtener todas las compras
+    const citas = await Citas.findAll();
+
+    // Verificar si hay compras
+    if (!citas || citas.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron citas' });
+    }
+
+    const citasServicios = [];
+
+    for (const cita of citas) {
+      const citaServicio = await Citas_Servicios.findAll({
+        where: { id_cita: cita.id_cita },
+      });
+
+      citasServicios.push({
+        cita,
+        citaServicio,
+      });
+    }
+
+    res.json(citasServicios);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener las citas y sus servicios' });
+  }
+}
+
+  
+const getCitasHoy = async (req, res = response) => {
+  const { cedula_cliente } = req.body;
+  try {
+    const cliente = await Clientes.findOne({
+      where: { documento: cedula_cliente }
+    });
+    if (!cliente) {
+      return res.status(404).json({ error: 'Cliente no encontrado' });
+    }
+
+    const ultimaCita = await Citas.findOne({
+      where: { id_cliente: cliente.id_cliente },
+      order: [['Fecha_Atencion', 'DESC']], 
+    });
+
+    if (!ultimaCita) {
+      return res.status(404).json({ error: 'No se encontraron citas para el cliente' });
+    }
+    res.json(ultimaCita);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al obtener la lista de citas' });
@@ -98,8 +157,10 @@ const deleteCita = async (req, res = response) => {
 module.exports = {
   getCita,
   getCitas,
+  getCitasServcios,
+  getCitasHoy,
   postCita,
   putCita,
   putCitaEstado,
-  deleteCita
+  deleteCita,
 };

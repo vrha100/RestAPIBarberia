@@ -5,7 +5,6 @@ const http = require('http');
 const socketIO = require('socket.io');
 
 const authController = require('../controllers/authController');
-const { sequelize } = require('../database/config');
 
 class Server {
   constructor() {
