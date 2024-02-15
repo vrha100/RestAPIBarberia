@@ -2,10 +2,10 @@ const { Sequelize } = require('sequelize')
 
 const sequelize = new Sequelize({
     dialect: 'mysql',
-    host: "viaduct.proxy.rlwy.net",
-    port: 57694,
+    host: "monorail.proxy.rlwy.net",
+    port: 52256,
     username: "root",
-    password: "Da5ec-BgDfHCaaEdCbgE3eAbhafBHD1g",
+    password: "H5Fh3cdg1E1HdbB-1C2CDBacDB6Cfefc",
     database: "railway",
 })
 
