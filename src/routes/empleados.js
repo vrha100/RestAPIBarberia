@@ -1,7 +1,10 @@
 const {Router} = require('express')
 const route = Router()
+const verificarToken = require('../middlewares/verificarToken');
+
 
 const { getEmpleados, getEmpleado, postEmpleado, putEmpleado, cambiarEstadoEmpleado, getValidarDocumento } = require ('../controllers/empleados')
+route.use(verificarToken);
 
 route.get('/empleado', getEmpleados);
 route.get('/empleado/:id', getEmpleado);

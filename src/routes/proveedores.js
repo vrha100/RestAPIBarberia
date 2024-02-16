@@ -1,7 +1,10 @@
 const { Router } = require('express');
 const route = Router();
+const verificarToken = require('../middlewares/verificarToken');
+
 
 const { getProveedor,getProveedores, postProveedor, putProveedor, deleteProveedor, getProveedorProductos, cambiarEstadoProveedor } = require('../controllers/proveedores');
+route.get('/proveedores', getProveedores);
 
 route.get('/proveedores', getProveedores);
 route.get('/proveedores/:id', getProveedor);

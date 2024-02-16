@@ -1,7 +1,10 @@
 const {Router} = require('express')
 const route = Router()
+const verificarToken = require('../middlewares/verificarToken');
+
 
 const { getCliente,getClientes,postCliente,putCliente,deleteCliente} = require('../controllers/clientes')
+route.use(verificarToken);
 
 route.get('/cliente',getClientes),
 route.get('/cliente/:id',getCliente),
