@@ -10,6 +10,10 @@ const Proveedores = sequelize.define('proveedores', {
   nombre: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: {
+      name: 'nombre',
+      msg: 'El nombre ya está en uso',
+    },
   },
   direccion: {
     type: DataTypes.STRING,
@@ -22,9 +26,14 @@ const Proveedores = sequelize.define('proveedores', {
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
+    unique: {
+      name: 'email',
+      msg: 'El email ya está en uso o no es válido',
+    },
     validate: {
-      isEmail: true,
+      isEmail: {
+        msg: 'El email debe tener un formato válido',
+      },
     },
   },
   tipo_de_producto_servicio: {
@@ -45,3 +54,4 @@ const Proveedores = sequelize.define('proveedores', {
 });
 
 module.exports = Proveedores;
+

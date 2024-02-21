@@ -8,8 +8,6 @@ const Productos = sequelize.define('productos', {
     autoIncrement: true,
     primaryKey: true
   },
-
-
   nombre: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -35,7 +33,8 @@ const Productos = sequelize.define('productos', {
   
   stock: {
     type: DataTypes.INTEGER,
-    allowNull: true, 
+    allowNull: true,
+    defaultValue: 0,
   },
 
   estado: {
