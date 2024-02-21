@@ -4,12 +4,11 @@ const verificarToken = require('../middlewares/verificarToken');
 
 
 const { getDetalleCompra, getDetalleCompras, postDetalleCompra, putDetalleCompra, deleteDetalleCompra } = require('../controllers/detalleCompras');
-route.use(verificarToken);
 
-route.get('/detalle-compras', getDetalleCompras);
-route.get('/detalle-compras/:id', getDetalleCompra);
-route.post('/detalle-compras', postDetalleCompra);
-route.put('/detalle-compras/:id', putDetalleCompra);
-route.delete('/detalle-compras/:id', deleteDetalleCompra);
+route.get('/detalle-compras',verificarToken, getDetalleCompras);
+route.get('/detalle-compras/:id',verificarToken, getDetalleCompra);
+route.post('/detalle-compras',verificarToken, postDetalleCompra);
+route.put('/detalle-compras/:id',verificarToken, putDetalleCompra);
+route.delete('/detalle-compras/:id',verificarToken, deleteDetalleCompra);
 
 module.exports = route;
