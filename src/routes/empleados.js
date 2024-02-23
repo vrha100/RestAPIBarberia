@@ -1,13 +1,16 @@
 const {Router} = require('express')
 const route = Router()
-
-const { getEmpleados, getEmpleado, postEmpleado, putEmpleado, cambiarEstadoEmpleado } = require ('../controllers/empleados')
-
-route.get('/empleado', getEmpleados);
-route.get('/empleado/:id', getEmpleado);
-route.post('/empleado', postEmpleado);
-route.put('/empleado/:id', putEmpleado);
-route.put('/empleado/cambiarEstado/:id', cambiarEstadoEmpleado);
+const verificarToken = require('../middlewares/verificarToken');
 
 
-module.exports = route
+const { getEmpleados, getEmpleado, postEmpleado, putEmpleado, cambiarEstadoEmpleado, getValidarDocumento } = require ('../controllers/empleados');
+
+route.get('/empleado', verificarToken, getEmpleados);
+route.get('/empleado/:id',verificarToken, getEmpleado);
+route.post('/empleado', verificarToken, postEmpleado);
+route.put('/empleado/:id', verificarToken, putEmpleado);
+route.put('/empleado/cambiarEstado/:id', verificarToken, cambiarEstadoEmpleado);
+route.get('/validar', verificarToken, getValidarDocumento);
+
+
+module.exports = route;

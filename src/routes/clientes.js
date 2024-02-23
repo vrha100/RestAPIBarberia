@@ -1,12 +1,14 @@
-const {Router} = require('express')
-const route = Router()
+const {Router} = require('express');
+const route = Router();
+const verificarToken = require('../middlewares/verificarToken');
 
-const { getCliente,getClientes,postCliente,putCliente,deleteCliente} = require('../controllers/clientes')
 
-route.get('/cliente',getClientes),
-route.get('/cliente/:id',getCliente),
-route.post('/cliente',postCliente),
-route.put('/cliente/:id',putCliente),
-route.delete('/cliente/:id', deleteCliente)
+const { getCliente,getClientes,postCliente,putCliente,deleteCliente} = require('../controllers/clientes');
 
-module.exports = route
+route.get('/cliente', verificarToken, getClientes);
+route.get('/cliente/:id', verificarToken, getCliente);
+route.post('/cliente', verificarToken, postCliente);
+route.put('/cliente/:id', verificarToken, putCliente);
+route.delete('/cliente/:id', verificarToken, deleteCliente);
+
+module.exports = route;

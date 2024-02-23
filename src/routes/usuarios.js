@@ -1,14 +1,14 @@
 const { Router } = require('express');
-const route = Router();
+const router = Router();  // Cambia 'route' por 'router'
+const verificarToken = require('../middlewares/verificarToken');
+const { getUsuarios, getUsuario, postUsuario, putUsuario, deleteUsuario, actualizarPerfil} = require('../controllers/usuarios');
 
-const { getUsuarios, getUsuario, postUsuario, putUsuario, deleteUsuario} = require('../controllers/usuarios'); // Importa la función asignarRolUsuario del controlador de usuarios
+router.get('/usuario', getUsuarios);
+router.get('/usuario/:id', getUsuario);
+router.post('/usuario', postUsuario);
+router.put('/usuario/:id', putUsuario);
+router.delete('/usuario/:id', deleteUsuario);
 
-route.get('/usuario', getUsuarios);
-route.get('/usuario/:id', getUsuario);
-route.post('/usuario', postUsuario);
-route.put('/usuario/:id', putUsuario); // Asegúrate de corregir la ruta para actualizar un usuario
-route.delete('/usuario/:id', deleteUsuario);
-
-
-
-module.exports = route;
+//router.put('/actualizarPerfil', actualizarPerfil);  // Utiliza 'actualizarPerfil' en lugar de 'usuariosController.actualizarPerfil'
+router.put('/actualizarPerfil', verificarToken, actualizarPerfil);
+module.exports = router;
