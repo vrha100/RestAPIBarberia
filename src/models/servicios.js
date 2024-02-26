@@ -13,10 +13,13 @@ const Servicios = sequelize.define('servicios', {
         allowNull: false,
     },
     valor: {
-        type: DataTypes.DOUBLE,
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
     },
-    
+    estado: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+    },
 });
 
-module.exports = Servicios;
+module.exports = Servicios;

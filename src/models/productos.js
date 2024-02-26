@@ -33,7 +33,7 @@ const Productos = sequelize.define('productos', {
     defaultValue: 0, 
   },
   
-  stock: {
+  cantidad: {
     type: DataTypes.INTEGER,
     allowNull: true, 
   },

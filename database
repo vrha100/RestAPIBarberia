@@ -67,6 +67,7 @@ CREATE TABLE servicios (
     id_servicio BIGINT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(255),
     valor DECIMAL(10, 2),
+    estado ENUM('Activo', 'Inactivo') DEFAULT 'Activo'
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -194,17 +195,17 @@ ADD CONSTRAINT insumos_cantidad_no_negativa CHECK (cantidad >= 0);
 CREATE TABLE productos (
     id_producto BIGINT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(255) NOT NULL,
-    descripcion TEXT,
     precio DECIMAL(10, 2) NOT NULL,
-    stock INT NOT NULL,
+    cantidad INT NOT NULL,
     fecha_creacion DATE,
+    estado ENUM('Activo', 'Inactivo') DEFAULT 'Activo'
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Restricción para asegurar que el stock de los productos sea no negativo
+-- Restricción para asegurar que el cantidad de los productos sea no negativo
 ALTER TABLE productos
-ADD CONSTRAINT productos_stock_no_negativo CHECK (stock >= 0);
+ADD CONSTRAINT productos_cantidad_no_negativo CHECK (cantidad >= 0);
 
 -- Crear la tabla de reportes
 CREATE TABLE reportes (
@@ -225,9 +226,9 @@ START TRANSACTION;
 SET @id_producto = ?; -- Reemplaza "?" con el ID del producto recibido
 SET @valor_venta = ?; -- Reemplaza "?" con el valor de la venta recibido
 
--- Restar la cantidad vendida del stock
+-- Restar la cantidad vendida del cantidad
 UPDATE productos
-SET stock = stock - 1
+SET cantidad = cantidad - 1
 WHERE id_producto = @id_producto;
 
 -- Insertar el registro de la venta en la tabla de ventas

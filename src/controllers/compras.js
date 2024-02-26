@@ -101,11 +101,11 @@ const cambiarEstadoCompra = async (req, res = response) => {
           const producto = await Productos.findByPk(detalle.id_producto);
 
           if (producto) {
-            // Actualizar stock, precioCosto, precios, o cualquier otra lógica que necesites
+            // Actualizar cantidad, precioCosto, precios, o cualquier otra lógica que necesites
             // Aquí se supone que tienes métodos o lógica en tu modelo de Producto
             // para actualizar la información según tus necesidades.
             await producto.update({
-              stock: producto.stock + detalle.cantidad,
+              cantidad: producto.cantidad + detalle.cantidad,
               precioCosto: detalle.precioUnitario, // Suponiendo que precioUnitario es el costo de compra
               precioVenta: detalle.precioVenta,
             });

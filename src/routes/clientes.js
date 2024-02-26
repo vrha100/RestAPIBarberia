@@ -4,6 +4,7 @@ const verificarToken = require('../middlewares/verificarToken');
 
 
 const { getCliente,getClientes,postCliente,putCliente,deleteCliente} = require('../controllers/clientes')
+
 route.use(verificarToken);
 
 route.get('/cliente',getClientes),

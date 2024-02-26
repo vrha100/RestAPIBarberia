@@ -88,9 +88,9 @@ const postVentas = async (req, res = response) => {
         }
         const productoActual = await Producto.findByPk(producto.id);
         if (productoActual) {
-          productoActual.stock -= producto.cantidad;
+          productoActual.cantidad -= producto.cantidad;
           await productoActual.save();
-          console.log('Stock actualizado para el producto');
+          console.log('cantidad actualizado para el producto');
         } else {
           console.error('Producto no encontrado en la base de datos');
         }
