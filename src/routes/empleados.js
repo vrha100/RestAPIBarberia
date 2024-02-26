@@ -3,15 +3,14 @@ const route = Router()
 const verificarToken = require('../middlewares/verificarToken');
 
 
-const { getEmpleados, getEmpleado, postEmpleado, putEmpleado, cambiarEstadoEmpleado, getValidarDocumento } = require ('../controllers/empleados')
-route.use(verificarToken);
+const { getEmpleados, getEmpleado, postEmpleado, putEmpleado, cambiarEstadoEmpleado, getValidarDocumento } = require ('../controllers/empleados');
 
-route.get('/empleado', getEmpleados);
-route.get('/empleado/:id', getEmpleado);
-route.post('/empleado', postEmpleado);
-route.put('/empleado/:id', putEmpleado);
-route.put('/empleado/cambiarEstado/:id', cambiarEstadoEmpleado);
-route.get('/validar', getValidarDocumento)
+route.get('/empleado', verificarToken, getEmpleados);
+route.get('/empleado/:id',verificarToken, getEmpleado);
+route.post('/empleado', verificarToken, postEmpleado);
+route.put('/empleado/:id', verificarToken, putEmpleado);
+route.put('/empleado/cambiarEstado/:id', verificarToken, cambiarEstadoEmpleado);
+route.get('/validar', verificarToken, getValidarDocumento);
 
 
-module.exports = route
+module.exports = route;

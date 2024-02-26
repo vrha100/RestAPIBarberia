@@ -27,4 +27,4 @@ sequelize.sync()
         console.log("Error al sincronizar las tablas " + err)
     })
 
-module.exports = { sequelize }
+module.exports = { sequelize }  
