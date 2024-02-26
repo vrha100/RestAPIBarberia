@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../database/config');
-const Proveedor = require('./proveedores')
+
 
 const Productos = sequelize.define('productos', {
   id_producto: {
@@ -8,12 +8,6 @@ const Productos = sequelize.define('productos', {
     autoIncrement: true,
     primaryKey: true
   },
-
-  id_proveedor: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-
   nombre: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -26,20 +20,21 @@ const Productos = sequelize.define('productos', {
   },
 
   precioCosto: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.DOUBLE,
     allowNull: true,
     defaultValue: 0, 
   },
 
   precioVenta: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.DOUBLE,
     allowNull: true,
     defaultValue: 0, 
   },
   
   stock: {
     type: DataTypes.INTEGER,
-    allowNull: true, 
+    allowNull: true,
+    defaultValue: 0,
   },
 
   estado: {
@@ -48,6 +43,6 @@ const Productos = sequelize.define('productos', {
   },
 });
 
-Productos.belongsTo(Proveedor, { foreignKey: "id_proveedor" });
+
 
 module.exports = Productos;

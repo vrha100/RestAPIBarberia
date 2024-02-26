@@ -2,11 +2,6 @@ const Permiso = require('../models/permisos');
 const { response } = require('express');
 const Rol = require('../models/roles'); 
 
-const axios = require('axios');
-
-// Agrega el código de servicio de la API externa
-const API_URL = 'http://localhost:8095/api/permisos';
-
 const getPermisos = async (req, res = response) => {
     try {
         const listaPermisos = await Permiso.findAll();

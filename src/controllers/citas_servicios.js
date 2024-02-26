@@ -4,7 +4,7 @@ const { response } = require('express');
 const getCitasServicios = async (req, res = response) => {
   try {
     const listCitasServicios = await CitasServicios.findAll();
-    res.json({ listCitasServicios } );
+    res.json(listCitasServicios);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al obtener la lista de citas de servicios' });
@@ -14,7 +14,9 @@ const getCitasServicios = async (req, res = response) => {
 const getCitaServicio = async (req, res = response) => {
   const { id } = req.params;
   try {
-    const citaServicio = await CitasServicios.findByPk(id);
+    const citaServicio = await CitasServicios.findOne({
+      where: { id_cita: id }
+    });
     if (citaServicio) {
       res.json(citaServicio);
     } else {
