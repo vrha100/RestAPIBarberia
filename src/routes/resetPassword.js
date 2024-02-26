@@ -9,5 +9,10 @@ router.post('/solicitar-restablecimiento', resetPasswordController.solicitarRest
 
 router.post('/cambiar-contrasena', resetPasswordController.cambiarContrasena);
 
+//router.post('/cambiar-contrasena/:token', resetPasswordController.cambiarContrasena);
+// Ruta para incluir el token como parámetro
+//this.app.post(`${this.path}/cambiar-contrasena/:token`, resetPasswordController.cambiarContrasena);
+
+
 
 module.exports = router;

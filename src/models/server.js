@@ -5,44 +5,50 @@ const authController = require('../controllers/authController');
 const { sequelize } = require('../database/config');
 const recuperarContrasena = require('../controllers/resetPassword');
 const solicitarRestablecimiento= require('../controllers/resetPassword');
-
+const editarPerfil = require ('../controllers/usuarios')
 
 class Server {
     constructor() {
-        this.app = express()
-        this.port = process.env.PORT
-        this.path = '/api'
-        this.middlewares()
-        this.routes()
+      this.app = express();
+      this.port = process.env.PORT;
+      this.path = '/api';
+      this.middlewares();
+      this.routes();
     }
-
+  
     listen() {
-        this.app.listen(this.port, () => {
-            console.log(`Esta escchando por el puerto ${this.port}`)
-    listen(){
-        this.app.listen(this.port,()=>{
-          console.log(`Está escuchando por el puerto ${this.port}`);
-
-        }
-        )
+      this.app.listen(this.port, () => {
+        console.log(`Está escuchando por el puerto ${this.port}`);
+      });
     }
-
+  
     middlewares() {
-        this.app.use(express.static(__dirname + "/public"))
-        this.app.use(cors())
-        this.app.use(body_parser.json())
+      // Configuración específica de CORS
+      const corsOptions = {
+        origin: 'http://localhost:3001', // Reemplaza con la URL de tu frontend
+        credentials: true,
+      };
+  
+      this.app.use(cors(corsOptions));
+  
+      this.app.use(express.static(__dirname + '/public'));
+      this.app.use(body_parser.json());
     }
 
     routes() {
 
         this.app.post(`${this.path}/login`, authController.iniciarSesion);
 
-        this.app.post(`${this.path}/recuperar-contrasena`, recuperarContrasena.cambiarContrasena);
+        this.app.post(`${this.path}/cambiar-contrasena`, recuperarContrasena.cambiarContrasena);
         this.app.post(`${this.path}/solicitar-restablecimiento`,solicitarRestablecimiento.solicitarRestablecimiento);
+        this.app.post(`${this.path}/actualizarPerfil`, editarPerfil.actualizarPerfil);
+        
+        this.app.post(this.path, require('../routes/permisos'));
+        this.app.post(this.path,require('../routes/roles'))
+        this.app.post(this.path, require('../routes/usuarios'))
 
-
+      
         this.app.use(this.path, require('../routes/roles'))
-
         this.app.use(this.path, require('../routes/usuarios'))
         this.app.use(this.path, require('../routes/permisos'))
         this.app.use(this.path, require('../routes/ventas'))
@@ -59,6 +65,6 @@ class Server {
         this.app.use(this.path, require('../routes/detalleCompras'))
         this.app.use(this.path, require('../routes/citas_servicios'))
     }
-}
+};
 
 module.exports = Server

@@ -49,14 +49,20 @@ Rol.belongsToMany(Permiso, {
 
 // Método para asignar permisos a un rol
 Rol.prototype.asignarPermisos = async function (permisoIds) {
-  // Elimina todos los permisos asociados con este rol
-  await RolPermiso.destroy({
-    where: { id_rol: this.id_rol },
-  });
+  try {
+    // Elimina todos los permisos asociados con este rol
+    await RolPermiso.destroy({
+      where: { id_rol: this.id_rol },
+    });
 
-  // Asigna los nuevos permisos al rol
-  const nuevosPermisos = permisoIds.map((id_permiso) => ({ id_rol: this.id_rol, id_permiso }));
-  await RolPermiso.bulkCreate(nuevosPermisos);
+    // Asigna los nuevos permisos al rol
+    const nuevosPermisos = permisoIds.map((id_permiso) => ({ id_rol: this.id_rol, id_permiso }));
+    await RolPermiso.bulkCreate(nuevosPermisos);
+
+    return true; // Indica que la asignación fue exitosa
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error al asignar permisos al rol');
+  }
 };
-
 module.exports = Rol;

@@ -1,5 +1,6 @@
 const Permiso = require('../models/permisos');
 const { response } = require('express');
+const Rol = require('../models/roles'); 
 
 const axios = require('axios');
 
@@ -84,27 +85,7 @@ const deletePermiso = async (req, res = response) => {
     }
 };
 
-const asignarPermisoARol = async (req, res = response) => {
-    try {
-        const { idPermiso, idRol } = req.body;
 
-        // Verificar si existe el permiso y el rol
-        const permiso = await Permiso.findByPk(idPermiso);
-        const rol = await Rol.findByPk(idRol);
-
-        if (!permiso || !rol) {
-            return res.status(404).json({ error: 'No se encontró el permiso o el rol con los IDs proporcionados' });
-        }
-
-        // Asignar el permiso al rol
-        await rol.addPermiso(permiso);
-
-        res.json({ message: `Se asignó el permiso con ID ${idPermiso} al rol con ID ${idRol}` });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error al asignar el permiso al rol' });
-    }
-};
 
 
 module.exports = {
@@ -113,6 +94,6 @@ module.exports = {
     postPermiso,
     editPermiso,
     deletePermiso,
-    asignarPermisoARol
+ 
 };
 

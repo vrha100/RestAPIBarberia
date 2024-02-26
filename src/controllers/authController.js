@@ -1,8 +1,11 @@
 const jwt = require('jsonwebtoken');
 const { sequelize } = require('../database/config');
 const Usuario = require('../models/usuarios');
+const Rol = require('../models/roles');
+const Permiso = require ('../models/permisos')
 const { response } = require('express');
 const bcrypt = require('bcrypt');
+
 async function iniciarSesion(req, res = response) {
   const { nombre_usuario, contrasena } = req.body;
 
@@ -11,9 +14,15 @@ async function iniciarSesion(req, res = response) {
     await sequelize.authenticate();
     console.log('Conexión a la base de datos establecida correctamente.');
 
-    // Buscar al usuario por nombre de usuario
     const usuarioEncontrado = await Usuario.findOne({
       where: { nombre_usuario },
+      include: {
+        model: Rol,
+        include: {
+          model: Permiso,
+          as: 'permisos', // Alias definido en la relación muchos a muchos
+        },
+      },
     });
 
     // Verificar si se encontró al usuario
@@ -29,15 +38,41 @@ async function iniciarSesion(req, res = response) {
         res.status(403).json({ mensaje: 'Usuario inactivo, no puede iniciar sesión' });
         return;
       }
+      
+      if (usuarioEncontrado.Rol.estado === 'Inactivo') {
+        res.status(403).json({ mensaje: 'Rol inactivo, no se puede iniciar sesión' });
+        return;
+      }
 
-      // Generar un token con la información del usuario
-      const token = generarToken(usuarioEncontrado);
 
-      // Log del token generado
-      console.log('Token generado después de encontrar al usuario:', token);
+      // Formatear la respuesta
+      const usuarioFormateado = {
+        userId: usuarioEncontrado.id_usuario,
+        nombre_usuario: usuarioEncontrado.nombre_usuario,
+        rol: usuarioEncontrado.Rol ? { // Verificar si el usuario tiene un rol asignado
+          id_rol: usuarioEncontrado.Rol.id_rol,
+          nombre: usuarioEncontrado.Rol.nombre,
+          estado: usuarioEncontrado.Rol.estado,
+          permisos: usuarioEncontrado.Rol.permisos ? usuarioEncontrado.Rol.permisos.map(permiso => ({
+            id_permiso: permiso.id_permiso,
+            nombre_permiso: permiso.nombre_permiso,
+            ruta: permiso.ruta,
+          })) : [],
+        } : null,
+        correo: usuarioEncontrado.correo,
+        created_at: usuarioEncontrado.created_at,
+        updated_at: usuarioEncontrado.updated_at,
+        estado: usuarioEncontrado.estado,
+        // Puedes incluir más campos según tus necesidades
+      };
 
-      // Enviar el token como respuesta
-      res.json({ token, userId: usuarioEncontrado.id_usuario });
+      // Generar un token con la información del usuario formateado
+      const token = generarToken(usuarioFormateado);
+
+      res.json({
+        token,
+        usuario: usuarioFormateado,
+      });
     } else {
       res.status(401).json({ mensaje: 'Contraseña incorrecta' });
     }
@@ -57,6 +92,10 @@ async function iniciarSesion(req, res = response) {
 }
 
 
+
+
+
+
 // Nueva función para generar token de restablecimiento
 function generarToken(usuario, tipoToken) {
   const { id_usuario, nombre_usuario, rol } = usuario;
@@ -74,4 +113,5 @@ function generarToken(usuario, tipoToken) {
 
 module.exports = {
   iniciarSesion,
+  generarToken
 };

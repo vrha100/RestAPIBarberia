@@ -4,7 +4,7 @@ function verificarToken(req, res, next) {
   const token = req.headers['authorization'];
 
   if (!token) {
-    return res.status(403).json({ mensaje: 'Token no proporcionado' });
+    return res.status(403).json({ mensaje: 'Token NO proporcionado' });
   }
 
   const tokenParts = token.split(' ');
@@ -20,7 +20,7 @@ function verificarToken(req, res, next) {
   jwt.verify(tokenValue, secretKey, (err, decoded) => {
     if (err) {
       console.error('Error al verificar el token:', err);
-      return res.status(401).json({ mensaje: 'Token inválido' });
+      return res.status(401).json({ mensaje: 'Token Inválido' });
     }
 
     req.usuario = decoded; // Agrega la información del usuario a la solicitud
